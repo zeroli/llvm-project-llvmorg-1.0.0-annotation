@@ -1,12 +1,12 @@
 //===-- X86TargetMachine.cpp - Define TargetMachine for the X86 -----------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
-// 
+//
 // This file defines the X86 specific subclass of TargetMachine.
 //
 //===----------------------------------------------------------------------===//
@@ -69,6 +69,7 @@ bool X86TargetMachine::addPassesToEmitAssembly(PassManager &PM,
   // FIXME: Add SSA based peephole optimizer here.
 
   // Print the instruction selected machine code...
+  // 这个pass只是对machine function dump，最后深入到了MachineInstr级别打印
   if (PrintCode)
     PM.add(createMachineFunctionPrinterPass());
 
@@ -91,6 +92,7 @@ bool X86TargetMachine::addPassesToEmitAssembly(PassManager &PM,
   if (PrintCode)  // Print the register-allocated code
     PM.add(createX86CodePrinterPass(std::cerr, *this));
 
+  // 这个pass才是产生assembly code的pass
   PM.add(createX86CodePrinterPass(Out, *this));
   return false; // success!
 }

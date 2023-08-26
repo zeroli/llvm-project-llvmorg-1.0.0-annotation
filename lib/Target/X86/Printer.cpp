@@ -1,10 +1,10 @@
 //===-- X86/Printer.cpp - Convert X86 LLVM code to Intel assembly ---------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file contains a printer that converts from our internal
@@ -76,7 +76,8 @@ namespace {
 		 bool elideOffsetKeyword = false);
     void printMemReference(const MachineInstr *MI, unsigned Op);
     void printConstantPool(MachineConstantPool *MCP);
-    bool runOnMachineFunction(MachineFunction &F);    
+    // 子类实现的函数
+    bool runOnMachineFunction(MachineFunction &F);
     std::string ConstantExprToString(const ConstantExpr* CE);
     std::string valToExprString(const Value* V);
     bool doInitialization(Module &M);
@@ -97,7 +98,7 @@ FunctionPass *createX86CodePrinterPass(std::ostream &o,TargetMachine &tm){
 
 /// valToExprString - Helper function for ConstantExprToString().
 /// Appends result to argument string S.
-/// 
+///
 std::string Printer::valToExprString(const Value* V) {
   std::string S;
   bool failed = false;
@@ -183,7 +184,7 @@ Printer::printSingleConstantValue(const Constant* CV)
          CV->getType() != Type::TypeTy &&
          CV->getType() != Type::LabelTy &&
          "Unexpected type for Constant");
-  
+
   assert((!isa<ConstantArray>(CV) && ! isa<ConstantStruct>(CV))
          && "Aggregate types should be handled outside this function");
 
@@ -221,7 +222,7 @@ Printer::printSingleConstantValue(const Constant* CV)
       break;
     }
   O << "\t";
-  
+
   if (const ConstantExpr* CE = dyn_cast<ConstantExpr>(CV))
     {
       // Constant expression built from operators, constants, and
@@ -237,14 +238,14 @@ Printer::printSingleConstantValue(const Constant* CV)
 	if (type == Type::FloatTy) {
 	  float FVal = (float)Val;
 	  char *ProxyPtr = (char*)&FVal;        // Abide by C TBAA rules
-	  O << *(unsigned int*)ProxyPtr;            
+	  O << *(unsigned int*)ProxyPtr;
 	} else if (type == Type::DoubleTy) {
 	  char *ProxyPtr = (char*)&Val;         // Abide by C TBAA rules
-	  O << *(uint64_t*)ProxyPtr;            
+	  O << *(uint64_t*)ProxyPtr;
 	} else {
 	  assert(0 && "Unknown floating point type!");
 	}
-        
+
 	O << "\t# " << type->getDescription() << " value: " << Val << "\n";
       } else {
 	WriteAsOperand(O, CV, false, false) << "\n";
@@ -328,11 +329,11 @@ static std::string getAsCString(const ConstantArray *CVA) {
 
 // Print a constant value or values (it may be an aggregate).
 // Uses printSingleConstantValue() to print each individual value.
-void Printer::printConstantValueOnly(const Constant *CV) {  
+void Printer::printConstantValueOnly(const Constant *CV) {
   const TargetData &TD = TM.getTargetData();
 
   if (CV->isNullValue()) {
-    O << "\t.zero\t " << TD.getTypeSize(CV->getType()) << "\n";      
+    O << "\t.zero\t " << TD.getTypeSize(CV->getType()) << "\n";
   } else if (const ConstantArray *CVA = dyn_cast<ConstantArray>(CV)) {
     if (isStringCompatible(CVA)) {
       // print the string alone and return
@@ -362,7 +363,7 @@ void Printer::printConstantValueOnly(const Constant *CV) {
 
       // Insert the field padding unless it's zero bytes...
       if (padSize)
-        O << "\t.zero\t " << padSize << "\n";      
+        O << "\t.zero\t " << padSize << "\n";
     }
     assert(sizeSoFar == cvsLayout->StructSize &&
            "Layout of constant struct may be incorrect!");
@@ -378,7 +379,7 @@ void Printer::printConstantValueOnly(const Constant *CV) {
 void Printer::printConstantPool(MachineConstantPool *MCP) {
   const std::vector<Constant*> &CP = MCP->getConstants();
   const TargetData &TD = TM.getTargetData();
- 
+
   if (CP.empty()) return;
 
   for (unsigned i = 0, e = CP.size(); i != e; ++i) {
@@ -494,20 +495,20 @@ void Printer::printOp(const MachineOperand &MO,
     O << MO.getSymbolName();
     return;
   default:
-    O << "<unknown operand type>"; return;    
+    O << "<unknown operand type>"; return;
   }
 }
 
 static const std::string sizePtr(const TargetInstrDescriptor &Desc) {
   switch (Desc.TSFlags & X86II::ArgMask) {
   default: assert(0 && "Unknown arg size!");
-  case X86II::Arg8:   return "BYTE PTR"; 
-  case X86II::Arg16:  return "WORD PTR"; 
-  case X86II::Arg32:  return "DWORD PTR"; 
-  case X86II::Arg64:  return "QWORD PTR"; 
-  case X86II::ArgF32:  return "DWORD PTR"; 
-  case X86II::ArgF64:  return "QWORD PTR"; 
-  case X86II::ArgF80:  return "XWORD PTR"; 
+  case X86II::Arg8:   return "BYTE PTR";
+  case X86II::Arg16:  return "WORD PTR";
+  case X86II::Arg32:  return "DWORD PTR";
+  case X86II::Arg64:  return "QWORD PTR";
+  case X86II::ArgF32:  return "DWORD PTR";
+  case X86II::ArgF64:  return "QWORD PTR";
+  case X86II::ArgF80:  return "XWORD PTR";
   }
 }
 
@@ -603,7 +604,7 @@ void Printer::printMachineInstruction(const MachineInstr *MI) {
       }
     } else {
       unsigned i = 0;
-      if (MI->getNumOperands() && (MI->getOperand(0).opIsDefOnly() || 
+      if (MI->getNumOperands() && (MI->getOperand(0).opIsDefOnly() ||
                                    MI->getOperand(0).opIsDefAndUse())) {
 	printOp(MI->getOperand(0));
 	O << " = ";
@@ -613,10 +614,10 @@ void Printer::printMachineInstruction(const MachineInstr *MI) {
 
       for (unsigned e = MI->getNumOperands(); i != e; ++i) {
 	O << " ";
-	if (MI->getOperand(i).opIsDefOnly() || 
+	if (MI->getOperand(i).opIsDefOnly() ||
             MI->getOperand(i).opIsDefAndUse()) O << "*";
 	printOp(MI->getOperand(i));
-	if (MI->getOperand(i).opIsDefOnly() || 
+	if (MI->getOperand(i).opIsDefOnly() ||
             MI->getOperand(i).opIsDefAndUse()) O << "*";
       }
     }
@@ -653,7 +654,7 @@ void Printer::printMachineInstruction(const MachineInstr *MI) {
     // M_2_ADDR_REG instruction
     //
     assert(MI->getOperand(0).isRegister() &&
-           (MI->getNumOperands() == 1 || 
+           (MI->getNumOperands() == 1 ||
             (MI->getNumOperands() == 2 &&
              (MI->getOperand(1).getVRegValueOrNull() ||
               MI->getOperand(1).isImmediate() ||
@@ -663,7 +664,7 @@ void Printer::printMachineInstruction(const MachineInstr *MI) {
            "Illegal form for AddRegFrm instruction!");
 
     unsigned Reg = MI->getOperand(0).getReg();
-    
+
     O << TII.getName(MI->getOpCode()) << " ";
     printOp(MI->getOperand(0));
     if (MI->getNumOperands() == 2 &&
@@ -743,8 +744,8 @@ void Printer::printMachineInstruction(const MachineInstr *MI) {
     //
     assert(MI->getOperand(0).isRegister() &&
            MI->getOperand(1).isRegister() &&
-           (MI->getNumOperands() == 2 || 
-            (MI->getNumOperands() == 3 && 
+           (MI->getNumOperands() == 2 ||
+            (MI->getNumOperands() == 3 &&
              (MI->getOperand(2).isRegister() ||
               MI->getOperand(2).isImmediate())))
            && "Bad format for MRMSrcReg!");
@@ -772,8 +773,8 @@ void Printer::printMachineInstruction(const MachineInstr *MI) {
     // register reference for the mod/rm field, it's a memory reference.
     //
     assert(MI->getOperand(0).isRegister() &&
-           (MI->getNumOperands() == 1+4 && isMem(MI, 1)) || 
-           (MI->getNumOperands() == 2+4 && MI->getOperand(1).isRegister() && 
+           (MI->getNumOperands() == 1+4 && isMem(MI, 1)) ||
+           (MI->getNumOperands() == 2+4 && MI->getOperand(1).isRegister() &&
             isMem(MI, 2))
            && "Bad format for MRMDestReg!");
     if (MI->getNumOperands() == 2+4 &&
@@ -797,7 +798,7 @@ void Printer::printMachineInstruction(const MachineInstr *MI) {
     //  2. cmp reg, immediate
     //  2. shl rdest, rinput  <implicit CL or 1>
     //  3. sbb rdest, rinput, immediate   [rdest = rinput]
-    //    
+    //
     assert(MI->getNumOperands() > 0 && MI->getNumOperands() < 4 &&
            MI->getOperand(0).isRegister() && "Bad MRMSxR format!");
     assert((MI->getNumOperands() != 2 ||
@@ -807,7 +808,7 @@ void Printer::printMachineInstruction(const MachineInstr *MI) {
 	    (MI->getOperand(1).isRegister() && MI->getOperand(2).isImmediate())) &&
            "Bad MRMSxR format!");
 
-    if (MI->getNumOperands() > 1 && MI->getOperand(1).isRegister() && 
+    if (MI->getNumOperands() > 1 && MI->getOperand(1).isRegister() &&
         MI->getOperand(0).getReg() != MI->getOperand(1).getReg())
       O << "**";
 
@@ -832,7 +833,7 @@ void Printer::printMachineInstruction(const MachineInstr *MI) {
     //  2. cmp [m], immediate
     //  2. shl [m], rinput  <implicit CL or 1>
     //  3. sbb [m], immediate
-    //    
+    //
     assert(MI->getNumOperands() >= 4 && MI->getNumOperands() <= 5 &&
            isMem(MI, 0) && "Bad MRMSxM format!");
     assert((MI->getNumOperands() != 5 || MI->getOperand(4).isImmediate()) &&
@@ -910,7 +911,7 @@ void Printer::printMachineInstruction(const MachineInstr *MI) {
       }
       O << "\t# ";
     }
-    
+
     O << TII.getName(MI->getOpCode()) << " ";
     O << sizePtr(Desc) << " ";
     printMemReference(MI, 0);
@@ -966,13 +967,13 @@ bool Printer::doFinalization(Module &M) {
       unsigned Size = TD.getTypeSize(C->getType());
       unsigned Align = TD.getTypeAlignment(C->getType());
 
-      if (C->isNullValue() && 
+      if (C->isNullValue() &&
           (I->hasLinkOnceLinkage() || I->hasInternalLinkage() ||
            I->hasWeakLinkage() /* FIXME: Verify correct */)) {
         SwitchSection(O, CurSection, ".data");
         if (I->hasInternalLinkage())
           O << "\t.local " << name << "\n";
-        
+
         O << "\t.comm " << name << "," << TD.getTypeSize(C->getType())
           << "," << (unsigned)TD.getTypeAlignment(C->getType());
         O << "\t\t# ";
@@ -987,7 +988,7 @@ bool Printer::doFinalization(Module &M) {
           SwitchSection(O, CurSection, "");
           O << "\t.section\t.llvm.linkonce.d." << name << ",\"aw\",@progbits\n";
           break;
-        
+
         case GlobalValue::AppendingLinkage:
           // FIXME: appending linkage variables should go into a section of
           // their name or something.  For now, just emit them as external.
