@@ -5369,64 +5369,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 # Autoconf 2.13's AC_OBJEXT and AC_EXEEXT macros only works for C compilers!
 
 # find the maximum length of command line arguments
-echo "$as_me:$LINENO: checking the maximum length of command line arguments" >&5
-echo $ECHO_N "checking the maximum length of command line arguments... $ECHO_C" >&6
-if test "${lt_cv_sys_max_cmd_len+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-    i=0
-  testring="ABCD"
-
-  case $build_os in
-  msdosdjgpp*)
-    # On DJGPP, this test can blow up pretty badly due to problems in libc
-    # (any single argument exceeding 2000 bytes causes a buffer overrun
-    # during glob expansion).  Even if it were fixed, the result of this
-    # check would be larger than it should be.
-    lt_cv_sys_max_cmd_len=12288;    # 12K is about right
-    ;;
-
-  gnu*)
-    # Under GNU Hurd, this test is not required because there is
-    # no limit to the length of command line arguments.
-    # Libtool will interpret -1 as no limit whatsoever
-    lt_cv_sys_max_cmd_len=-1;
-    ;;
-
-  cygwin* | mingw*)
-    # On Win9x/ME, this test blows up -- it succeeds, but takes
-    # about 5 minutes as the teststring grows exponentially.
-    # Worse, since 9x/ME are not pre-emptively multitasking,
-    # you end up with a "frozen" computer, even though with patience
-    # the test eventually succeeds (with a max line length of 256k).
-    # Instead, let's just punt: use the minimum linelength reported by
-    # all of the supported platforms: 8192 (on NT/2K/XP).
-    lt_cv_sys_max_cmd_len=8192;
-    ;;
-
- *)
-    # If test is not a shell built-in, we'll probably end up computing a
-    # maximum length that is only half of the actual maximum length, but
-    # we can't tell.
-    while (test "X"`$CONFIG_SHELL $0 --fallback-echo "X$testring" 2>/dev/null` \
-	       = "XX$testring") >/dev/null 2>&1 &&
-	    new_result=`expr "X$testring" : ".*" 2>&1` &&
-	    lt_cv_sys_max_cmd_len=$new_result &&
-	    test $i != 17 # 1/2 MB should be enough
-    do
-      i=`expr $i + 1`
-      testring=$testring$testring
-    done
-    testring=
-    # Add a significant safety factor because C++ compilers can tack on massive
-    # amounts of additional arguments before passing them to the linker.
-    # It appears as though 1/2 is a usable value.
-    lt_cv_sys_max_cmd_len=`expr $lt_cv_sys_max_cmd_len \/ 2`
-    ;;
-  esac
-
-fi
-
+lt_cv_sys_max_cmd_len=8192
 if test -n $lt_cv_sys_max_cmd_len ; then
   echo "$as_me:$LINENO: result: $lt_cv_sys_max_cmd_len" >&5
 echo "${ECHO_T}$lt_cv_sys_max_cmd_len" >&6
@@ -22349,7 +22292,7 @@ if test ${ac_cv_func_mmap_file} = "no"
 then
 	{ { echo "$as_me:$LINENO: error: mmap() of files required but not found" >&5
 echo "$as_me: error: mmap() of files required but not found" >&2;}
-   { (exit 1); exit 1; }; }
+  }
 fi
 echo "$as_me:$LINENO: checking for MAP_ANONYMOUS vs. MAP_ANON" >&5
 echo $ECHO_N "checking for MAP_ANONYMOUS vs. MAP_ANON... $ECHO_C" >&6
