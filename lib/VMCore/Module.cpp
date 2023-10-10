@@ -1,10 +1,10 @@
 //===-- Module.cpp - Implement the Module class ---------------------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file implements the Module class for the VMCore library.
@@ -47,8 +47,8 @@ iplist<GlobalVariable> &ilist_traits<GlobalVariable>::getList(Module *M) {
 
 // Explicit instantiations of SymbolTableListTraits since some of the methods
 // are not in the public header file...
-template SymbolTableListTraits<GlobalVariable, Module, Module>;
-template SymbolTableListTraits<Function, Module, Module>;
+template class SymbolTableListTraits<GlobalVariable, Module, Module>;
+template class SymbolTableListTraits<Function, Module, Module>;
 
 // Define the GlobalValueRefMap as a struct that wraps a map so that we don't
 // have Module.h depend on <map>
@@ -142,7 +142,7 @@ bool Module::addTypeName(const std::string &Name, const Type *Ty) {
   SymbolTable &ST = getSymbolTable();
 
   if (ST.lookup(Type::TypeTy, Name)) return true;  // Already in symtab...
-  
+
   // Not in symbol table?  Set the name with the Symtab as an argument so the
   // type knows what to update...
   ((Value*)Ty)->setName(Name, &ST);
@@ -186,7 +186,7 @@ Function *Module::getMainFunction() {
     if (Function *F = getFunction("main", FunctionType::get(Type::IntTy,
                                                             Params, false)))
       return F;
-    
+
     // void main(int argc, char **argv)...
     if (Function *F = getFunction("main", FunctionType::get(Type::VoidTy,
                                                             Params, false)))
@@ -256,7 +256,7 @@ void Module::dropAllReferences() {
   // destroyConstantPointerRef, below).
   //
   while (GVRefMap)
-    // Delete the ConstantPointerRef node...  
+    // Delete the ConstantPointerRef node...
     GVRefMap->Map.begin()->second->destroyConstant();
 }
 
@@ -277,7 +277,7 @@ void Module::destroyConstantPointerRef(ConstantPointerRef *CPR) {
   assert(GVRefMap && "No map allocated, but we have a CPR?");
   if (!GVRefMap->Map.erase(CPR->getValue()))  // Remove it from the map...
     assert(0 && "ConstantPointerRef not found in module CPR map!");
-  
+
   if (GVRefMap->Map.empty()) {   // If the map is empty, delete it.
     delete GVRefMap;
     GVRefMap = 0;
@@ -287,7 +287,7 @@ void Module::destroyConstantPointerRef(ConstantPointerRef *CPR) {
 void Module::mutateConstantPointerRef(GlobalValue *OldGV, GlobalValue *NewGV) {
   assert(OldGV != NewGV && "Cannot mutate to the same global!");
   GlobalValueRefMap::iterator I = GVRefMap->Map.find(OldGV);
-  assert(I != GVRefMap->Map.end() && 
+  assert(I != GVRefMap->Map.end() &&
 	 "mutateConstantPointerRef; OldGV not in table!");
   ConstantPointerRef *Ref = I->second;
 

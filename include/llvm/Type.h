@@ -1,25 +1,25 @@
 //===-- llvm/Type.h - Classes for handling data types -----------*- C++ -*-===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file contains the declaration of the Type class.  For more "Type" type
 // stuff, look in DerivedTypes.h.
 //
 // Note that instances of the Type class are immutable: once they are created,
-// they are never changed.  Also note that only one instance of a particular 
-// type is ever created.  Thus seeing if two types are equal is a matter of 
+// they are never changed.  Also note that only one instance of a particular
+// type is ever created.  Thus seeing if two types are equal is a matter of
 // doing a trivial pointer comparison.
 //
 // Types, once allocated, are never free'd.
 //
 // Opaque types are simple derived types with no state.  There may be many
 // different Opaque type objects floating around, but two are only considered
-// identical if they are pointer equals of each other.  This allows us to have 
+// identical if they are pointer equals of each other.  This allows us to have
 // two opaque types that end up resolving to different concrete types later.
 //
 // Opaque types are also kinda wierd and scary and different because they have
@@ -48,7 +48,7 @@ struct Type : public Value {
   ///===-------------------------------------------------------------------===//
   /// Definitions of all of the base types for the Type system.  Based on this
   /// value, you can cast to a "DerivedType" subclass (see DerivedTypes.h)
-  /// Note: If you add an element to this, you need to add an element to the 
+  /// Note: If you add an element to this, you need to add an element to the
   /// Type::getPrimitiveType function, or else things will break!
   ///
   enum PrimitiveID {
@@ -61,7 +61,7 @@ struct Type : public Value {
     FloatTyID     , DoubleTyID,         // 10,11: Floating point types...
 
     TypeTyID,                           // 12   : Type definitions
-    LabelTyID     ,                     // 13   : Labels... 
+    LabelTyID     ,                     // 13   : Labels...
 
     // Derived types... see DerivedTypes.h file...
     // Make sure FirstDerivedTyID stays up to date!!!
@@ -132,12 +132,12 @@ public:
   /// Float and Double.
   //
   virtual bool isSigned() const { return 0; }
-  
+
   /// isUnsigned - Return whether a numeric type is unsigned.  This is not quite
   /// the complement of isSigned... nonnumeric types return false as they do
   /// with isSigned.  This returns true for UByteTy, UShortTy, UIntTy, and
   /// ULongTy
-  /// 
+  ///
   virtual bool isUnsigned() const { return 0; }
 
   /// isInteger - Equilivent to isSigned() || isUnsigned(), but with only a
@@ -155,7 +155,7 @@ public:
   bool isFloatingPoint() const { return ID == FloatTyID || ID == DoubleTyID; }
 
   /// isAbstract - True if the type is either an Opaque type, or is a derived
-  /// type that includes an opaque type somewhere in it.  
+  /// type that includes an opaque type somewhere in it.
   ///
   inline bool isAbstract() const { return Abstract; }
 
@@ -234,7 +234,7 @@ public:
   static Type *VoidTy , *BoolTy;
   static Type *SByteTy, *UByteTy,
               *ShortTy, *UShortTy,
-              *IntTy  , *UIntTy, 
+              *IntTy  , *UIntTy,
               *LongTy , *ULongTy;
   static Type *FloatTy, *DoubleTy;
 
@@ -248,7 +248,7 @@ public:
 
 #include "llvm/Type.def"
 
-private:
+public:
   class TypeIterator : public bidirectional_iterator<const Type, ptrdiff_t> {
     const Type * const Ty;
     unsigned Idx;
@@ -263,18 +263,18 @@ private:
       Idx = RHS.Idx;
       return *this;
     }
-    
+
     bool operator==(const _Self& x) const { return Idx == x.Idx; }
     bool operator!=(const _Self& x) const { return !operator==(x); }
-    
+
     pointer operator*() const { return Ty->getContainedType(Idx); }
     pointer operator->() const { return operator*(); }
-    
+
     _Self& operator++() { ++Idx; return *this; } // Preincrement
     _Self operator++(int) { // Postincrement
-      _Self tmp = *this; ++*this; return tmp; 
+      _Self tmp = *this; ++*this; return tmp;
     }
-    
+
     _Self& operator--() { --Idx; return *this; }  // Predecrement
     _Self operator--(int) { // Postdecrement
       _Self tmp = *this; --*this; return tmp;
@@ -291,7 +291,7 @@ inline Type::TypeIterator Type::subtype_end() const {
 }
 
 
-// Provide specializations of GraphTraits to be able to treat a type as a 
+// Provide specializations of GraphTraits to be able to treat a type as a
 // graph of sub types...
 
 template <> struct GraphTraits<Type*> {
@@ -299,10 +299,10 @@ template <> struct GraphTraits<Type*> {
   typedef Type::subtype_iterator ChildIteratorType;
 
   static inline NodeType *getEntryNode(Type *T) { return T; }
-  static inline ChildIteratorType child_begin(NodeType *N) { 
-    return N->subtype_begin(); 
+  static inline ChildIteratorType child_begin(NodeType *N) {
+    return N->subtype_begin();
   }
-  static inline ChildIteratorType child_end(NodeType *N) { 
+  static inline ChildIteratorType child_end(NodeType *N) {
     return N->subtype_end();
   }
 };
@@ -312,15 +312,15 @@ template <> struct GraphTraits<const Type*> {
   typedef Type::subtype_iterator ChildIteratorType;
 
   static inline NodeType *getEntryNode(const Type *T) { return T; }
-  static inline ChildIteratorType child_begin(NodeType *N) { 
-    return N->subtype_begin(); 
+  static inline ChildIteratorType child_begin(NodeType *N) {
+    return N->subtype_begin();
   }
-  static inline ChildIteratorType child_end(NodeType *N) { 
+  static inline ChildIteratorType child_end(NodeType *N) {
     return N->subtype_end();
   }
 };
 
-template <> inline bool isa_impl<PointerType, Type>(const Type &Ty) { 
+template <> inline bool isa_impl<PointerType, Type>(const Type &Ty) {
   return Ty.getPrimitiveID() == Type::PointerTyID;
 }
 

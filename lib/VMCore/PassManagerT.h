@@ -141,7 +141,7 @@ class PassManagerT : public PassManagerTraits<UnitType>,public AnalysisResolver{
 
   friend class PassManagerTraits<UnitType>::PassClass;
   friend class PassManagerTraits<UnitType>::SubPassClass;
-  friend class Traits;
+  friend class PassManagerTraits<UnitType>;
   friend class ImmutablePass;
 
   // 这里就是它管理的一堆pass的队列链表

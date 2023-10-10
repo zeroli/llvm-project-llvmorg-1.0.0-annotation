@@ -1,10 +1,10 @@
 //===- Support/CommandLine.h - Flexible Command line parser -----*- C++ -*-===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This class implements a command line argument processor that is useful when
@@ -116,7 +116,7 @@ enum MiscFlags {                // Miscellaneous flags to adjust argument
 //
 class alias;
 class Option {
-  friend void cl::ParseCommandLineOptions(int &, char **, const char *, int);
+  friend void cl::ParseCommandLineOptions(int &, char **, const char *);
   friend class alias;
 
   // handleOccurrences - Overriden by subclasses to handle the value passed into
@@ -125,11 +125,11 @@ class Option {
   //
   virtual bool handleOccurrence(const char *ArgName, const std::string &Arg) = 0;
 
-  virtual enum NumOccurrences getNumOccurrencesFlagDefault() const { 
+  virtual enum NumOccurrences getNumOccurrencesFlagDefault() const {
     return Optional;
   }
   virtual enum ValueExpected getValueExpectedFlagDefault() const {
-    return ValueOptional; 
+    return ValueOptional;
   }
   virtual enum OptionHidden getOptionHiddenFlagDefault() const {
     return NotHidden;
@@ -205,7 +205,7 @@ public:
   // Return the width of the option tag for printing...
   virtual unsigned getOptionWidth() const = 0;
 
-  // printOptionInfo - Print out information about this option.  The 
+  // printOptionInfo - Print out information about this option.  The
   // to-be-maintained width is specified.
   //
   virtual void printOptionInfo(unsigned GlobalWidth) const = 0;
@@ -299,7 +299,7 @@ class ValuesClass {
   std::vector<std::pair<const char *, std::pair<int, const char *> > > Values;
   void processValues(va_list Vals);
 public:
-  ValuesClass(const char *EnumName, DataType Val, const char *Desc, 
+  ValuesClass(const char *EnumName, DataType Val, const char *Desc,
               va_list ValueArgs) {
     // Insert the first value, which is required.
     Values.push_back(std::make_pair(EnumName, std::make_pair(Val, Desc)));
@@ -354,14 +354,14 @@ struct generic_parser_base {
 
   // getOption - Return option name N.
   virtual const char *getOption(unsigned N) const = 0;
-  
+
   // getDescription - Return description N
   virtual const char *getDescription(unsigned N) const = 0;
 
   // Return the width of the option tag for printing...
   virtual unsigned getOptionWidth(const Option &O) const;
 
-  // printOptionInfo - Print out information about this option.  The 
+  // printOptionInfo - Print out information about this option.  The
   // to-be-maintained width is specified.
   //
   virtual void printOptionInfo(const Option &O, unsigned GlobalWidth) const;
@@ -472,12 +472,12 @@ struct basic_parser_impl {  // non-template implementation of basic_parser<t>
   enum ValueExpected getValueExpectedFlagDefault() const {
     return ValueRequired;
   }
-  
+
   void initialize(Option &O) {}
-  
+
   // Return the width of the option tag for printing...
   unsigned getOptionWidth(const Option &O) const;
-  
+
   // printOptionInfo - Print out information about this option.  The
   // to-be-maintained width is specified.
   //
@@ -507,7 +507,7 @@ struct parser<bool> : public basic_parser<bool> {
   bool parse(Option &O, const char *ArgName, const std::string &Arg, bool &Val);
 
   enum ValueExpected getValueExpectedFlagDefault() const {
-    return ValueOptional; 
+    return ValueOptional;
   }
 
   // getValueName - Do not print =<value> at all
@@ -520,7 +520,7 @@ struct parser<bool> : public basic_parser<bool> {
 //
 template<>
 struct parser<int> : public basic_parser<int> {
-  
+
   // parse - Return true on error.
   bool parse(Option &O, const char *ArgName, const std::string &Arg, int &Val);
 
@@ -534,7 +534,7 @@ struct parser<int> : public basic_parser<int> {
 //
 template<>
 struct parser<unsigned> : public basic_parser<unsigned> {
-  
+
   // parse - Return true on error.
   bool parse(Option &O, const char *ArgName, const std::string &Arg,
              unsigned &Val);
@@ -711,7 +711,7 @@ struct opt_storage<DataType, false, false> {
 //
 template <class DataType, bool ExternalStorage = false,
           class ParserClass = parser<DataType> >
-class opt : public Option, 
+class opt : public Option,
             public opt_storage<DataType, ExternalStorage,
                                ::boost::is_class<DataType>::value> {
   ParserClass Parser;
@@ -720,7 +720,7 @@ class opt : public Option,
     typename ParserClass::parser_data_type Val;
     if (Parser.parse(*this, ArgName, Arg, Val))
       return true;                            // Parse error!
-    setValue(Val);
+    this->setValue(Val);
     return false;
   }
 
@@ -865,7 +865,7 @@ template <class DataType, class Storage = bool,
 class list : public Option, public list_storage<DataType, Storage> {
   ParserClass Parser;
 
-  virtual enum NumOccurrences getNumOccurrencesFlagDefault() const { 
+  virtual enum NumOccurrences getNumOccurrencesFlagDefault() const {
     return ZeroOrMore;
   }
   virtual enum ValueExpected getValueExpectedFlagDefault() const {

@@ -60,7 +60,7 @@ PATH: /c/Users/zeli/Apps/go1.20.5.windows-amd64/go/bin/
 PATH: /c/Users/zeli/Apps/node-v10.11.0-win-x64/
 PATH: /c/Users/zeli/Apps/msys64/usr/bin
 PATH: /c/Users/zeli/Apps/msys64/mingw64/bin
-PATH: /c/Users/zeli/Apps/cmake-3.17.3-win64-x64/bin
+PATH: /c/Users/zeli/Apps/cmake-3.27.6-windows-x86_64/bin
 PATH: /c/Users/zeli/Apps/eclipse/java-2019-03/eclipse
 PATH: /c/Users/zeli/Apps/jdk-8u211/bin
 PATH: /c/Users/zeli/AppData/Local/Continuum/anaconda2
@@ -358,7 +358,7 @@ configure:3698: $? = 0
 configure:3710: result: lex.yy
 configure:3715: checking whether yytext is a pointer
 configure:3731: gcc -o conftest.exe -g -O2   conftest.c   >&5
-C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\cccUAqJe.o: in function `yylex':
+C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\ccgZEaO0.o: in function `yylex':
 C:\Users\zeli\opencode\llvm-project-llvmorg-1.0.0-annotation/lex.yy.c:798: undefined reference to `yywrap'
 C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../lib/libmingw32.a(lib64_libmingw32_a-crt0_c.o): in function `main':
 C:/M/mingw-w64-crt-git/src/mingw-w64/mingw-w64-crt/crt/crt0_c.c:18: undefined reference to `WinMain'
@@ -2536,7 +2536,8 @@ configure:18730: checking for mv
 configure:18748: found /usr/bin/mv
 configure:18761: result: /usr/bin/mv
 configure:18777: checking for dot
-configure:18808: result: false
+configure:18795: found /c/Users/zeli/Apps/msys64/mingw64/bin/dot
+configure:18808: result: /c/Users/zeli/Apps/msys64/mingw64/bin/dot
 configure:18818: checking for etags
 configure:18849: result: false
 configure:18859: checking for python
@@ -2591,7 +2592,7 @@ configure: failed program was:
 configure:19026: result: no
 configure:19038: checking for library containing dlopen
 configure:19069: gcc -o conftest.exe -g -O2   conftest.c  >&5
-C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\ccit5put.o: in function `main':
+C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\ccazowXl.o: in function `main':
 C:\Users\zeli\opencode\llvm-project-llvmorg-1.0.0-annotation/configure:19077: undefined reference to `dlopen'
 collect2.exe: error: ld returned 1 exit status
 configure:19072: $? = 1
@@ -2679,7 +2680,7 @@ configure:19137: result: no
 configure:19147: WARNING: dlopen() not found - disabling plugin support
 configure:19152: checking for library containing mallinfo
 configure:19183: gcc -o conftest.exe -g -O2   conftest.c  >&5
-C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\cccR99cV.o: in function `main':
+C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\ccAv0DLb.o: in function `main':
 C:\Users\zeli\opencode\llvm-project-llvmorg-1.0.0-annotation/configure:19191: undefined reference to `mallinfo'
 collect2.exe: error: ld returned 1 exit status
 configure:19186: $? = 1
@@ -3960,460 +3961,100 @@ configure:22002: $? = 0
 configure:22005: test -s conftest.exe
 configure:22008: $? = 0
 configure:22019: result: yes
-configure:22029: checking for working mmap
-configure:22172: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure:22141:10: fatal error: sys/mman.h: No such file or directory
-22141 |   if (fd < 0)
-      |          ^~~~        
-compilation terminated.
-configure:22175: $? = 1
-configure: program exited with status 1
-configure: failed program was:
-| #line 22037 "configure"
-| /* confdefs.h.  */
-| 
-| #define PACKAGE_NAME "[LLVM]"
-| #define PACKAGE_TARNAME "--llvm--"
-| #define PACKAGE_VERSION "[1.0]"
-| #define PACKAGE_STRING "[LLVM] [1.0]"
-| #define PACKAGE_BUGREPORT "llvmbugs@cs.uiuc.edu"
-| #ifdef __cplusplus
-| #include <stdlib.h>
-| #endif
-| #define STDC_HEADERS 1
-| #define HAVE_SYS_TYPES_H 1
-| #define HAVE_SYS_STAT_H 1
-| #define HAVE_STDLIB_H 1
-| #define HAVE_STRING_H 1
-| #define HAVE_MEMORY_H 1
-| #define HAVE_STRINGS_H 1
-| #define HAVE_INTTYPES_H 1
-| #define HAVE_STDINT_H 1
-| #define HAVE_UNISTD_H 1
-| #define STDC_HEADERS 1
-| #define HAVE_ASSERT_H 1
-| #define HAVE_FCNTL_H 1
-| #define HAVE_LIMITS_H 1
-| #define HAVE_SYS_TIME_H 1
-| #define HAVE_UNISTD_H 1
-| #define HAVE_ERRNO_H 1
-| #define HAVE_SIGNAL_H 1
-| #define HAVE_MATH_H 1
-| #define HAVE_MALLOC_H 1
-| #define ENDIAN_LITTLE
-| #define HAVE_INT64_T 1
-| #define HAVE_UINT64_T 1
-| #define TIME_WITH_SYS_TIME 1
-| #define HAVE_NAMESPACES
-| #define HAVE_GNU_EXT_HASH_MAP
-| #define HAVE_GNU_EXT_HASH_SET
-| #define HAVE_EXT_SLIST gnu
-| #define HAVE_STD_ITERATOR
-| #define HAVE_ALLOCA 1
-| #define HAVE_STDLIB_H 1
-| #define HAVE_UNISTD_H 1
-| #define HAVE_GETPAGESIZE 1
-| /* end confdefs.h.  */
-| #include <stdio.h>
-| #if HAVE_SYS_TYPES_H
-| # include <sys/types.h>
-| #endif
-| #if HAVE_SYS_STAT_H
-| # include <sys/stat.h>
-| #endif
-| #if STDC_HEADERS
-| # include <stdlib.h>
-| # include <stddef.h>
-| #else
-| # if HAVE_STDLIB_H
-| #  include <stdlib.h>
-| # endif
-| #endif
-| #if HAVE_STRING_H
-| # if !STDC_HEADERS && HAVE_MEMORY_H
-| #  include <memory.h>
-| # endif
-| # include <string.h>
-| #endif
-| #if HAVE_STRINGS_H
-| # include <strings.h>
-| #endif
-| #if HAVE_INTTYPES_H
-| # include <inttypes.h>
-| #else
-| # if HAVE_STDINT_H
-| #  include <stdint.h>
-| # endif
-| #endif
-| #if HAVE_UNISTD_H
-| # include <unistd.h>
-| #endif
-| /* malloc might have been renamed as rpl_malloc. */
-| #undef malloc
-| 
-| /* Thanks to Mike Haertel and Jim Avera for this test.
-|    Here is a matrix of mmap possibilities:
-| 	mmap private not fixed
-| 	mmap private fixed at somewhere currently unmapped
-| 	mmap private fixed at somewhere already mapped
-| 	mmap shared not fixed
-| 	mmap shared fixed at somewhere currently unmapped
-| 	mmap shared fixed at somewhere already mapped
-|    For private mappings, we should verify that changes cannot be read()
-|    back from the file, nor mmap's back from the file at a different
-|    address.  (There have been systems where private was not correctly
-|    implemented like the infamous i386 svr4.0, and systems where the
-|    VM page cache was not coherent with the file system buffer cache
-|    like early versions of FreeBSD and possibly contemporary NetBSD.)
-|    For shared mappings, we should conversely verify that changes get
-|    propagated back to all the places they're supposed to be.
-| 
-|    Grep wants private fixed already mapped.
-|    The main things grep needs to know about mmap are:
-|    * does it exist and is it safe to write into the mmap'd area
-|    * how to use it (BSD variants)  */
-| 
-| #include <fcntl.h>
-| #include <sys/mman.h>
-| 
-| #if !STDC_HEADERS && !HAVE_STDLIB_H
-| char *malloc ();
-| #endif
-| 
-| /* This mess was copied from the GNU getpagesize.h.  */
-| #if !HAVE_GETPAGESIZE
-| /* Assume that all systems that can run configure have sys/param.h.  */
-| # if !HAVE_SYS_PARAM_H
-| #  define HAVE_SYS_PARAM_H 1
-| # endif
-| 
-| # ifdef _SC_PAGESIZE
-| #  define getpagesize() sysconf(_SC_PAGESIZE)
-| # else /* no _SC_PAGESIZE */
-| #  if HAVE_SYS_PARAM_H
-| #   include <sys/param.h>
-| #   ifdef EXEC_PAGESIZE
-| #    define getpagesize() EXEC_PAGESIZE
-| #   else /* no EXEC_PAGESIZE */
-| #    ifdef NBPG
-| #     define getpagesize() NBPG * CLSIZE
-| #     ifndef CLSIZE
-| #      define CLSIZE 1
-| #     endif /* no CLSIZE */
-| #    else /* no NBPG */
-| #     ifdef NBPC
-| #      define getpagesize() NBPC
-| #     else /* no NBPC */
-| #      ifdef PAGESIZE
-| #       define getpagesize() PAGESIZE
-| #      endif /* PAGESIZE */
-| #     endif /* no NBPC */
-| #    endif /* no NBPG */
-| #   endif /* no EXEC_PAGESIZE */
-| #  else /* no HAVE_SYS_PARAM_H */
-| #   define getpagesize() 8192	/* punt totally */
-| #  endif /* no HAVE_SYS_PARAM_H */
-| # endif /* no _SC_PAGESIZE */
-| 
-| #endif /* no HAVE_GETPAGESIZE */
-| 
-| int
-| main ()
-| {
-|   char *data, *data2, *data3;
-|   int i, pagesize;
-|   int fd;
-| 
-|   pagesize = getpagesize ();
-| 
-|   /* First, make a file with some known garbage in it. */
-|   data = (char *) malloc (pagesize);
-|   if (!data)
-|     exit (1);
-|   for (i = 0; i < pagesize; ++i)
-|     *(data + i) = rand ();
-|   umask (0);
-|   fd = creat ("conftest.mmap", 0600);
-|   if (fd < 0)
-|     exit (1);
-|   if (write (fd, data, pagesize) != pagesize)
-|     exit (1);
-|   close (fd);
-| 
-|   /* Next, try to mmap the file at a fixed address which already has
-|      something else allocated at it.  If we can, also make sure that
-|      we see the same garbage.  */
-|   fd = open ("conftest.mmap", O_RDWR);
-|   if (fd < 0)
-|     exit (1);
-|   data2 = (char *) malloc (2 * pagesize);
-|   if (!data2)
-|     exit (1);
-|   data2 += (pagesize - ((int) data2 & (pagesize - 1))) & (pagesize - 1);
-|   if (data2 != mmap (data2, pagesize, PROT_READ | PROT_WRITE,
-|                      MAP_PRIVATE | MAP_FIXED, fd, 0L))
-|     exit (1);
-|   for (i = 0; i < pagesize; ++i)
-|     if (*(data + i) != *(data2 + i))
-|       exit (1);
-| 
-|   /* Finally, make sure that changes to the mapped area do not
-|      percolate back to the file as seen by read().  (This is a bug on
-|      some variants of i386 svr4.0.)  */
-|   for (i = 0; i < pagesize; ++i)
-|     *(data2 + i) = *(data2 + i) + 1;
-|   data3 = (char *) malloc (pagesize);
-|   if (!data3)
-|     exit (1);
-|   if (read (fd, data3, pagesize) != pagesize)
-|     exit (1);
-|   for (i = 0; i < pagesize; ++i)
-|     if (*(data + i) != *(data3 + i))
-|       exit (1);
-|   close (fd);
-|   exit (0);
-| }
-configure:22194: result: no
-configure:22205: checking for mmap of files
-configure:22250: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure: In function 'main':
-configure:22284:39: warning: implicit declaration of function 'mmap' [-Wimplicit-function-declaration]
-22284 | #define HAVE_MMAP_FILE
-      |                                       ^   
-configure:22284:51: error: 'PROT_READ' undeclared (first use in this function)
-22284 | #define HAVE_MMAP_FILE
-      |                                                   ^        
-configure:22284:51: note: each undeclared identifier is reported only once for each function it appears in
-configure:22284:62: error: 'MAP_SHARED' undeclared (first use in this function)
-22284 | #define HAVE_MMAP_FILE
-      |                                                              ^         
-configure:22284:118: error: 'MAP_FAILED' undeclared (first use in this function)
-22284 | #define HAVE_MMAP_FILE
-      |                                                                                                                      ^         
-configure:22253: $? = 1
-configure: program exited with status 1
-configure: failed program was:
-| #line 22225 "configure"
-| /* confdefs.h.  */
-| 
-| #define PACKAGE_NAME "[LLVM]"
-| #define PACKAGE_TARNAME "--llvm--"
-| #define PACKAGE_VERSION "[1.0]"
-| #define PACKAGE_STRING "[LLVM] [1.0]"
-| #define PACKAGE_BUGREPORT "llvmbugs@cs.uiuc.edu"
-| #ifdef __cplusplus
-| #include <stdlib.h>
-| #endif
-| #define STDC_HEADERS 1
-| #define HAVE_SYS_TYPES_H 1
-| #define HAVE_SYS_STAT_H 1
-| #define HAVE_STDLIB_H 1
-| #define HAVE_STRING_H 1
-| #define HAVE_MEMORY_H 1
-| #define HAVE_STRINGS_H 1
-| #define HAVE_INTTYPES_H 1
-| #define HAVE_STDINT_H 1
-| #define HAVE_UNISTD_H 1
-| #define STDC_HEADERS 1
-| #define HAVE_ASSERT_H 1
-| #define HAVE_FCNTL_H 1
-| #define HAVE_LIMITS_H 1
-| #define HAVE_SYS_TIME_H 1
-| #define HAVE_UNISTD_H 1
-| #define HAVE_ERRNO_H 1
-| #define HAVE_SIGNAL_H 1
-| #define HAVE_MATH_H 1
-| #define HAVE_MALLOC_H 1
-| #define ENDIAN_LITTLE
-| #define HAVE_INT64_T 1
-| #define HAVE_UINT64_T 1
-| #define TIME_WITH_SYS_TIME 1
-| #define HAVE_NAMESPACES
-| #define HAVE_GNU_EXT_HASH_MAP
-| #define HAVE_GNU_EXT_HASH_SET
-| #define HAVE_EXT_SLIST gnu
-| #define HAVE_STD_ITERATOR
-| #define HAVE_ALLOCA 1
-| #define HAVE_STDLIB_H 1
-| #define HAVE_UNISTD_H 1
-| #define HAVE_GETPAGESIZE 1
-| /* end confdefs.h.  */
-| 
-| #ifdef HAVE_SYS_TYPES_H
-| #include <sys/types.h>
-| #endif
-| 
-| #ifdef HAVE_SYS_MMAN_H
-| #include <sys/mman.h>
-| #endif
-| 
-| #ifdef HAVE_FCNTL_H
-| #include <fcntl.h>
-| #endif
-| 
-|   int fd;
-|   int main () {
-|   fd = creat ("foo",0777); fd = (int) mmap (0, 1, PROT_READ, MAP_SHARED, fd, 0); unlink ("foo"); return (fd != (int) MAP_FAILED);}
-configure:22279: result: no
-configure:22293: error: mmap() of files required but not found
-configure:22297: checking for MAP_ANONYMOUS vs. MAP_ANON
-configure:22329: gcc -c -g -O2  conftest.c >&5
-configure:22354:10: fatal error: sys/mman.h: No such file or directory
-22354 | 
-      |          ^           
-compilation terminated.
-configure:22332: $? = 1
-configure: failed program was:
-| #line 22310 "configure"
-| /* confdefs.h.  */
-| 
-| #define PACKAGE_NAME "[LLVM]"
-| #define PACKAGE_TARNAME "--llvm--"
-| #define PACKAGE_VERSION "[1.0]"
-| #define PACKAGE_STRING "[LLVM] [1.0]"
-| #define PACKAGE_BUGREPORT "llvmbugs@cs.uiuc.edu"
-| #ifdef __cplusplus
-| #include <stdlib.h>
-| #endif
-| #define STDC_HEADERS 1
-| #define HAVE_SYS_TYPES_H 1
-| #define HAVE_SYS_STAT_H 1
-| #define HAVE_STDLIB_H 1
-| #define HAVE_STRING_H 1
-| #define HAVE_MEMORY_H 1
-| #define HAVE_STRINGS_H 1
-| #define HAVE_INTTYPES_H 1
-| #define HAVE_STDINT_H 1
-| #define HAVE_UNISTD_H 1
-| #define STDC_HEADERS 1
-| #define HAVE_ASSERT_H 1
-| #define HAVE_FCNTL_H 1
-| #define HAVE_LIMITS_H 1
-| #define HAVE_SYS_TIME_H 1
-| #define HAVE_UNISTD_H 1
-| #define HAVE_ERRNO_H 1
-| #define HAVE_SIGNAL_H 1
-| #define HAVE_MATH_H 1
-| #define HAVE_MALLOC_H 1
-| #define ENDIAN_LITTLE
-| #define HAVE_INT64_T 1
-| #define HAVE_UINT64_T 1
-| #define TIME_WITH_SYS_TIME 1
-| #define HAVE_NAMESPACES
-| #define HAVE_GNU_EXT_HASH_MAP
-| #define HAVE_GNU_EXT_HASH_SET
-| #define HAVE_EXT_SLIST gnu
-| #define HAVE_STD_ITERATOR
-| #define HAVE_ALLOCA 1
-| #define HAVE_STDLIB_H 1
-| #define HAVE_UNISTD_H 1
-| #define HAVE_GETPAGESIZE 1
-| /* end confdefs.h.  */
-| #include <sys/mman.h>
-|   #include <unistd.h>
-|   #include <fcntl.h>
-| int
-| main ()
-| {
-| mmap (0, 1, PROT_READ, MAP_ANONYMOUS, -1, 0); return (0);
-|   ;
-|   return 0;
-| }
-configure:22356: result: no
-configure:22366: checking return type of signal handlers
-configure:22398: gcc -c -g -O2  conftest.c >&5
-configure:22401: $? = 0
-configure:22404: test -s conftest.o
-configure:22407: $? = 0
-configure:22418: result: void
-configure:22440: checking for getcwd
-configure:22490: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure:22493: $? = 0
-configure:22496: test -s conftest.exe
-configure:22499: $? = 0
-configure:22510: result: yes
-configure:22440: checking for gettimeofday
-configure:22490: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure:22493: $? = 0
-configure:22496: test -s conftest.exe
-configure:22499: $? = 0
-configure:22510: result: yes
-configure:22440: checking for strcspn
-configure:22490: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure:22508:6: warning: conflicting types for built-in function 'strcspn'; expected 'long long unsigned int(const char *, const char *)' [-Wbuiltin-declaration-mismatch]
-22508 | rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+configure:22037: checking return type of signal handlers
+configure:22069: gcc -c -g -O2  conftest.c >&5
+configure:22072: $? = 0
+configure:22075: test -s conftest.o
+configure:22078: $? = 0
+configure:22089: result: void
+configure:22111: checking for getcwd
+configure:22161: gcc -o conftest.exe -g -O2   conftest.c  >&5
+configure:22164: $? = 0
+configure:22167: test -s conftest.exe
+configure:22170: $? = 0
+configure:22181: result: yes
+configure:22111: checking for gettimeofday
+configure:22161: gcc -o conftest.exe -g -O2   conftest.c  >&5
+configure:22164: $? = 0
+configure:22167: test -s conftest.exe
+configure:22170: $? = 0
+configure:22181: result: yes
+configure:22111: checking for strcspn
+configure:22161: gcc -o conftest.exe -g -O2   conftest.c  >&5
+configure:22181:6: warning: conflicting types for built-in function 'strcspn'; expected 'long long unsigned int(const char *, const char *)' [-Wbuiltin-declaration-mismatch]
+22181 | echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_var'}'`" >&5
       |      ^~~~~~~
-configure:22498:1: note: 'strcspn' is declared in header '<string.h>'
-22497 |   (eval $ac_try) 2>&5
+configure:22171:1: note: 'strcspn' is declared in header '<string.h>'
+22170 |   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   +++ |+#include <string.h>
-22498 |   ac_status=$?
-configure:22493: $? = 0
-configure:22496: test -s conftest.exe
-configure:22499: $? = 0
-configure:22510: result: yes
-configure:22440: checking for strdup
-configure:22490: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure:22509:6: warning: conflicting types for built-in function 'strdup'; expected 'char *(const char *)' [-Wbuiltin-declaration-mismatch]
-22509 | fi
-      |      ^     
-configure:22493: $? = 0
-configure:22496: test -s conftest.exe
-configure:22499: $? = 0
-configure:22510: result: yes
-configure:22440: checking for strerror
-configure:22490: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure:22493: $? = 0
-configure:22496: test -s conftest.exe
-configure:22499: $? = 0
-configure:22510: result: yes
-configure:22440: checking for strspn
-configure:22490: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure:22511:6: warning: conflicting types for built-in function 'strspn'; expected 'long long unsigned int(const char *, const char *)' [-Wbuiltin-declaration-mismatch]
-22511 | echo "${ECHO_T}`eval echo '${'$as_ac_var'}'`" >&6
+22171 |   (exit $ac_status); }; }; then
+configure:22164: $? = 0
+configure:22167: test -s conftest.exe
+configure:22170: $? = 0
+configure:22181: result: yes
+configure:22111: checking for strdup
+configure:22161: gcc -o conftest.exe -g -O2   conftest.c  >&5
+configure:22182:6: warning: conflicting types for built-in function 'strdup'; expected 'char *(const char *)' [-Wbuiltin-declaration-mismatch]
+22182 | echo "${ECHO_T}`eval echo '${'$as_ac_var'}'`" >&6
       |      ^~~~~~
-configure:22501:1: note: 'strspn' is declared in header '<string.h>'
-22500 |   (exit $ac_status); }; }; then
-  +++ |+#include <string.h>
-22501 |   eval "$as_ac_var=yes"
-configure:22493: $? = 0
-configure:22496: test -s conftest.exe
-configure:22499: $? = 0
-configure:22510: result: yes
-configure:22440: checking for strstr
-configure:22490: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure:22512:6: warning: conflicting types for built-in function 'strstr'; expected 'char *(const char *, const char *)' [-Wbuiltin-declaration-mismatch]
-22512 | if test `eval echo '${'$as_ac_var'}'` = yes; then
+configure:22164: $? = 0
+configure:22167: test -s conftest.exe
+configure:22170: $? = 0
+configure:22181: result: yes
+configure:22111: checking for strerror
+configure:22161: gcc -o conftest.exe -g -O2   conftest.c  >&5
+configure:22164: $? = 0
+configure:22167: test -s conftest.exe
+configure:22170: $? = 0
+configure:22181: result: yes
+configure:22111: checking for strspn
+configure:22161: gcc -o conftest.exe -g -O2   conftest.c  >&5
+configure:22184:6: warning: conflicting types for built-in function 'strspn'; expected 'long long unsigned int(const char *, const char *)' [-Wbuiltin-declaration-mismatch]
+22184 |   cat >>confdefs.h <<_ACEOF
       |      ^~~~~~
-configure:22502:1: note: 'strstr' is declared in header '<string.h>'
-22501 |   eval "$as_ac_var=yes"
+configure:22174:1: note: 'strspn' is declared in header '<string.h>'
+22173 | else
   +++ |+#include <string.h>
-22502 | else
-configure:22493: $? = 0
-configure:22496: test -s conftest.exe
-configure:22499: $? = 0
-configure:22510: result: yes
-configure:22440: checking for strtod
-configure:22490: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure:22493: $? = 0
-configure:22496: test -s conftest.exe
-configure:22499: $? = 0
-configure:22510: result: yes
-configure:22440: checking for strtol
-configure:22490: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure:22493: $? = 0
-configure:22496: test -s conftest.exe
-configure:22499: $? = 0
-configure:22510: result: yes
-configure:22440: checking for strtoq
-configure:22490: gcc -o conftest.exe -g -O2   conftest.c  >&5
-C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\ccxFYDak.o:C:\Users\zeli\opencode\llvm-project-llvmorg-1.0.0-annotation/configure:22522: undefined reference to `strtoq'
-C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\ccxFYDak.o: in function `main':
-C:\Users\zeli\opencode\llvm-project-llvmorg-1.0.0-annotation/configure:22531: undefined reference to `strtoq'
-C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\ccxFYDak.o:conftest.c:(.rdata$.refptr.strtoq[.refptr.strtoq]+0x0): undefined reference to `strtoq'
+22174 |   echo "$as_me: failed program was:" >&5
+configure:22164: $? = 0
+configure:22167: test -s conftest.exe
+configure:22170: $? = 0
+configure:22181: result: yes
+configure:22111: checking for strstr
+configure:22161: gcc -o conftest.exe -g -O2   conftest.c  >&5
+configure:22185:6: warning: conflicting types for built-in function 'strstr'; expected 'char *(const char *, const char *)' [-Wbuiltin-declaration-mismatch]
+22185 | #define `echo "HAVE_$ac_func" | $as_tr_cpp` 1
+      |      ^~~~~~
+configure:22175:1: note: 'strstr' is declared in header '<string.h>'
+22174 |   echo "$as_me: failed program was:" >&5
+  +++ |+#include <string.h>
+22175 | sed 's/^/| /' conftest.$ac_ext >&5
+configure:22164: $? = 0
+configure:22167: test -s conftest.exe
+configure:22170: $? = 0
+configure:22181: result: yes
+configure:22111: checking for strtod
+configure:22161: gcc -o conftest.exe -g -O2   conftest.c  >&5
+configure:22164: $? = 0
+configure:22167: test -s conftest.exe
+configure:22170: $? = 0
+configure:22181: result: yes
+configure:22111: checking for strtol
+configure:22161: gcc -o conftest.exe -g -O2   conftest.c  >&5
+configure:22164: $? = 0
+configure:22167: test -s conftest.exe
+configure:22170: $? = 0
+configure:22181: result: yes
+configure:22111: checking for strtoq
+configure:22161: gcc -o conftest.exe -g -O2   conftest.c  >&5
+C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\cci5oBWV.o:C:\Users\zeli\opencode\llvm-project-llvmorg-1.0.0-annotation/configure:22195: undefined reference to `strtoq'
+C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\cci5oBWV.o: in function `main':
+C:\Users\zeli\opencode\llvm-project-llvmorg-1.0.0-annotation/configure:22204: undefined reference to `strtoq'
+C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\cci5oBWV.o:conftest.c:(.rdata$.refptr.strtoq[.refptr.strtoq]+0x0): undefined reference to `strtoq'
 collect2.exe: error: ld returned 1 exit status
-configure:22493: $? = 1
+configure:22164: $? = 1
 configure: failed program was:
-| #line 22445 "configure"
+| #line 22116 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME "[LLVM]"
@@ -4457,6 +4098,8 @@ configure: failed program was:
 | #define HAVE_STDLIB_H 1
 | #define HAVE_UNISTD_H 1
 | #define HAVE_GETPAGESIZE 1
+| #define HAVE_MMAP 1
+| #define HAVE_MMAP_ANONYMOUS
 | #define RETSIGTYPE void
 | #define HAVE_GETCWD 1
 | #define HAVE_GETTIMEOFDAY 1
@@ -4504,116 +4147,204 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:22510: result: no
-configure:22440: checking for strtoll
-configure:22490: gcc -o conftest.exe -g -O2   conftest.c  >&5
-configure:22493: $? = 0
-configure:22496: test -s conftest.exe
-configure:22499: $? = 0
-configure:22510: result: yes
-configure:22522: checking for mmap
-configure:22572: gcc -o conftest.exe -g -O2   conftest.c  >&5
-C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\ccUoh1Ct.o:C:\Users\zeli\opencode\llvm-project-llvmorg-1.0.0-annotation/configure:22605: undefined reference to `mmap'
-C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\ccUoh1Ct.o: in function `main':
-C:\Users\zeli\opencode\llvm-project-llvmorg-1.0.0-annotation/configure:22614: undefined reference to `mmap'
-C:/Users/zeli/Apps/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/12.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\zeli\AppData\Local\Temp\ccUoh1Ct.o:conftest.c:(.rdata$.refptr.mmap[.refptr.mmap]+0x0): undefined reference to `mmap'
-collect2.exe: error: ld returned 1 exit status
-configure:22575: $? = 1
-configure: failed program was:
-| #line 22527 "configure"
-| /* confdefs.h.  */
-| 
-| #define PACKAGE_NAME "[LLVM]"
-| #define PACKAGE_TARNAME "--llvm--"
-| #define PACKAGE_VERSION "[1.0]"
-| #define PACKAGE_STRING "[LLVM] [1.0]"
-| #define PACKAGE_BUGREPORT "llvmbugs@cs.uiuc.edu"
-| #ifdef __cplusplus
-| #include <stdlib.h>
-| #endif
-| #define STDC_HEADERS 1
-| #define HAVE_SYS_TYPES_H 1
-| #define HAVE_SYS_STAT_H 1
-| #define HAVE_STDLIB_H 1
-| #define HAVE_STRING_H 1
-| #define HAVE_MEMORY_H 1
-| #define HAVE_STRINGS_H 1
-| #define HAVE_INTTYPES_H 1
-| #define HAVE_STDINT_H 1
-| #define HAVE_UNISTD_H 1
-| #define STDC_HEADERS 1
-| #define HAVE_ASSERT_H 1
-| #define HAVE_FCNTL_H 1
-| #define HAVE_LIMITS_H 1
-| #define HAVE_SYS_TIME_H 1
-| #define HAVE_UNISTD_H 1
-| #define HAVE_ERRNO_H 1
-| #define HAVE_SIGNAL_H 1
-| #define HAVE_MATH_H 1
-| #define HAVE_MALLOC_H 1
-| #define ENDIAN_LITTLE
-| #define HAVE_INT64_T 1
-| #define HAVE_UINT64_T 1
-| #define TIME_WITH_SYS_TIME 1
-| #define HAVE_NAMESPACES
-| #define HAVE_GNU_EXT_HASH_MAP
-| #define HAVE_GNU_EXT_HASH_SET
-| #define HAVE_EXT_SLIST gnu
-| #define HAVE_STD_ITERATOR
-| #define HAVE_ALLOCA 1
-| #define HAVE_STDLIB_H 1
-| #define HAVE_UNISTD_H 1
-| #define HAVE_GETPAGESIZE 1
-| #define RETSIGTYPE void
-| #define HAVE_GETCWD 1
-| #define HAVE_GETTIMEOFDAY 1
-| #define HAVE_STRCSPN 1
-| #define HAVE_STRDUP 1
-| #define HAVE_STRERROR 1
-| #define HAVE_STRSPN 1
-| #define HAVE_STRSTR 1
-| #define HAVE_STRTOD 1
-| #define HAVE_STRTOL 1
-| #define HAVE_STRTOLL 1
-| /* end confdefs.h.  */
-| /* System header to define __stub macros and hopefully few prototypes,
-|     which can conflict with char mmap (); below.
-|     Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
-|     <limits.h> exists even on freestanding compilers.  */
-| #ifdef __STDC__
-| # include <limits.h>
-| #else
-| # include <assert.h>
-| #endif
-| /* Override any gcc2 internal prototype to avoid an error.  */
-| #ifdef __cplusplus
-| extern "C"
-| {
-| #endif
-| /* We use char because int might match the return type of a gcc2
-|    builtin and then its argument prototype would still apply.  */
-| char mmap ();
-| /* The GNU C library defines this for functions which it implements
-|     to always fail with ENOSYS.  Some functions are actually named
-|     something starting with __ and the normal name is an alias.  */
-| #if defined (__stub_mmap) || defined (__stub___mmap)
-| choke me
-| #else
-| char (*f) () = mmap;
-| #endif
-| #ifdef __cplusplus
-| }
-| #endif
-| 
-| int
-| main ()
-| {
-| return f != mmap;
-|   ;
-|   return 0;
-| }
-configure:22592: result: no
-configure:22597: error: Function mmap() required but not found
+configure:22181: result: no
+configure:22111: checking for strtoll
+configure:22161: gcc -o conftest.exe -g -O2   conftest.c  >&5
+configure:22164: $? = 0
+configure:22167: test -s conftest.exe
+configure:22170: $? = 0
+configure:22181: result: yes
+configure:22454: creating ./config.status
+
+## ---------------------- ##
+## Running config.status. ##
+## ---------------------- ##
+
+This file was extended by [LLVM] config.status [1.0], which was
+generated by GNU Autoconf 2.57.  Invocation command line was
+
+  CONFIG_FILES    = 
+  CONFIG_HEADERS  = 
+  CONFIG_LINKS    = 
+  CONFIG_COMMANDS = 
+  $ ./config.status 
+
+on LT464719
+
+config.status:1022: creating Makefile.config
+config.status:1126: creating include/Config/config.h
+config.status:1317: include/Config/config.h is unchanged
+config.status:1417: executing Makefile commands
+config.status:1417: executing Makefile.common commands
+config.status:1417: executing Makefile.rules commands
+config.status:1417: executing lib/Makefile commands
+config.status:1417: executing lib/Analysis/Makefile commands
+config.status:1417: executing lib/Analysis/DataStructure/Makefile commands
+config.status:1417: executing lib/Analysis/IPA/Makefile commands
+config.status:1417: executing lib/Analysis/LiveVar/Makefile commands
+config.status:1417: executing lib/AsmParser/Makefile commands
+config.status:1417: executing lib/Bytecode/Makefile commands
+config.status:1417: executing lib/Bytecode/Reader/Makefile commands
+config.status:1417: executing lib/Bytecode/Writer/Makefile commands
+config.status:1417: executing lib/CWriter/Makefile commands
+config.status:1417: executing lib/CodeGen/Makefile commands
+config.status:1417: executing lib/CodeGen/InstrSched/Makefile commands
+config.status:1417: executing lib/CodeGen/InstrSelection/Makefile commands
+config.status:1417: executing lib/CodeGen/ModuloScheduling/Makefile commands
+config.status:1417: executing lib/CodeGen/RegAlloc/Makefile commands
+config.status:1417: executing lib/CodeGen/SelectionDAG/Makefile commands
+config.status:1417: executing lib/ExecutionEngine/Makefile commands
+config.status:1417: executing lib/ExecutionEngine/Interpreter/Makefile commands
+config.status:1417: executing lib/ExecutionEngine/JIT/Makefile commands
+config.status:1417: executing lib/Support/Makefile commands
+config.status:1417: executing lib/Target/Makefile commands
+config.status:1417: executing lib/Target/Sparc/Makefile commands
+config.status:1417: executing lib/Target/X86/Makefile commands
+config.status:1417: executing lib/Transforms/Makefile commands
+config.status:1417: executing lib/Transforms/Hello/Makefile commands
+config.status:1417: executing lib/Transforms/IPO/Makefile commands
+config.status:1417: executing lib/Transforms/Instrumentation/Makefile commands
+config.status:1417: executing lib/Transforms/Instrumentation/ProfilePaths/Makefile commands
+config.status:1417: executing lib/Transforms/Scalar/Makefile commands
+config.status:1417: executing lib/Transforms/Utils/Makefile commands
+config.status:1417: executing lib/VMCore/Makefile commands
+config.status:1417: executing runtime/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/crtend/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/libc/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/libcurses/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/libg/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/libgcc/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/libm/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/libmalloc/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/libtermcap/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/libucb/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/libutempter/Makefile commands
+config.status:1417: executing runtime/GCCLibraries/libutil/Makefile commands
+config.status:1417: executing runtime/libdummy/Makefile commands
+config.status:1417: executing runtime/libtrace/Makefile commands
+config.status:1417: executing test/Makefile commands
+config.status:1417: executing test/Makefile.tests commands
+config.status:1417: executing test/QMTest/llvm.py commands
+config.status:1417: executing test/QMTest/llvmdb.py commands
+config.status:1417: executing test/Programs/Makefile commands
+config.status:1417: executing test/Programs/Makefile.programs commands
+config.status:1417: executing test/Programs/TEST.aa.Makefile commands
+config.status:1417: executing test/Programs/TEST.dsgraph.report commands
+config.status:1417: executing test/Programs/TEST.micro.report commands
+config.status:1417: executing test/Programs/TEST.aa.report commands
+config.status:1417: executing test/Programs/TEST.example.Makefile commands
+config.status:1417: executing test/Programs/TEST.nightly.Makefile commands
+config.status:1417: executing test/Programs/TEST.buildrepo.Makefile commands
+config.status:1417: executing test/Programs/TEST.jit.Makefile commands
+config.status:1417: executing test/Programs/TEST.nightly.report commands
+config.status:1417: executing test/Programs/TEST.dsgraph.Makefile commands
+config.status:1417: executing test/Programs/TEST.jit.report commands
+config.status:1417: executing test/Programs/TEST.typesafe.Makefile commands
+config.status:1417: executing test/Programs/TEST.dsgraph.gnuplot commands
+config.status:1417: executing test/Programs/TEST.micro.Makefile commands
+config.status:1417: executing test/Programs/External/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/Makefile.spec commands
+config.status:1417: executing test/Programs/External/SPEC/CFP2000/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CFP2000/177.mesa/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CFP2000/179.art/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CFP2000/183.equake/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CFP2000/188.ammp/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/164.gzip/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/175.vpr/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/176.gcc/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/181.mcf/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/186.crafty/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/197.parser/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/252.eon/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/253.perlbmk/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/254.gap/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/255.vortex/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/256.bzip2/Makefile commands
+config.status:1417: executing test/Programs/External/SPEC/CINT2000/300.twolf/Makefile commands
+config.status:1417: executing test/Programs/LLVMSource/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Makefile.multisrc commands
+config.status:1417: executing test/Programs/MultiSource/Applications/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Applications/Burg/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Applications/aha/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Applications/sgefa/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Fhourstones/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/McCat/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/McCat/01-qbsort/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/McCat/03-testtrie/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/McCat/04-bisect/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/McCat/05-eks/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/McCat/08-main/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/McCat/09-vor/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/McCat/12-IOtest/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/McCat/15-trie/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/McCat/17-bintr/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/McCat/18-imp/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Olden/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Olden/bh/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Olden/bisort/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Olden/em3d/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Olden/health/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Olden/mst/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Olden/perimeter/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Olden/power/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Olden/treeadd/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Olden/tsp/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Olden/voronoi/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/OptimizerEval/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Ptrdist/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Ptrdist/anagram/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Ptrdist/bc/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Ptrdist/ft/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Ptrdist/ks/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/Ptrdist/yacr2/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/llubenchmark/Makefile commands
+config.status:1417: executing test/Programs/MultiSource/Benchmarks/sim/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/Makefile.singlesrc commands
+config.status:1417: executing test/Programs/SingleSource/Gizmos/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/Benchmarks/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/Benchmarks/Dhrystone/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/Benchmarks/Shootout/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/Benchmarks/Stanford/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/Benchmarks/Misc/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/CustomChecked/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/UnitTests/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/UnitTests/SetjmpLongjmp/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/Regression/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/Regression/C/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/Regression/C++/Makefile commands
+config.status:1417: executing test/Programs/SingleSource/Regression/C++/EH/Makefile commands
+config.status:1417: executing tools/Makefile commands
+config.status:1417: executing tools/analyze/Makefile commands
+config.status:1417: executing tools/bugpoint/Makefile commands
+config.status:1417: executing tools/extract/Makefile commands
+config.status:1417: executing tools/gccas/Makefile commands
+config.status:1417: executing tools/gccld/Makefile commands
+config.status:1417: executing tools/llc/Makefile commands
+config.status:1417: executing tools/llee/Makefile commands
+config.status:1417: executing tools/lli/Makefile commands
+config.status:1417: executing tools/llvm-ar/Makefile commands
+config.status:1417: executing tools/llvm-as/Makefile commands
+config.status:1417: executing tools/llvm-dis/Makefile commands
+config.status:1417: executing tools/llvm-link/Makefile commands
+config.status:1417: executing tools/llvm-nm/Makefile commands
+config.status:1417: executing tools/opt/Makefile commands
+config.status:1417: executing utils/Makefile commands
+config.status:1417: executing utils/Burg/Makefile commands
+config.status:1417: executing utils/Burg/Doc/Makefile commands
+config.status:1417: executing utils/TableGen/Makefile commands
+config.status:1417: executing projects/Makefile commands
+config.status:1417: executing projects/ModuleMaker/Makefile commands
+config.status:1417: executing projects/ModuleMaker/Makefile.common commands
+config.status:1417: executing projects/ModuleMaker/tools/Makefile commands
+config.status:1417: executing projects/ModuleMaker/tools/ModuleMaker/Makefile commands
+configure:24121: configuring in projects/sample
+configure:24205: running /bin/sh './configure' --prefix=/usr/local  '--build=x86_64' 'CXXFLAGS=-g -O0' 'build_alias=x86_64' --cache-file=/dev/null --srcdir=.
 
 ## ---------------- ##
 ## Cache variables. ##
@@ -4667,9 +4398,6 @@ ac_cv_func_getcwd=yes
 ac_cv_func_getpagesize=yes
 ac_cv_func_gettimeofday=yes
 ac_cv_func_memcmp_working=yes
-ac_cv_func_mmap=no
-ac_cv_func_mmap_file=no
-ac_cv_func_mmap_fixed_mapped=no
 ac_cv_func_strcspn=yes
 ac_cv_func_strdup=yes
 ac_cv_func_strerror=yes
@@ -4689,7 +4417,6 @@ ac_cv_header_link_h=no
 ac_cv_header_malloc_h=yes
 ac_cv_header_math_h=yes
 ac_cv_header_memory_h=yes
-ac_cv_header_mmap_anon=no
 ac_cv_header_signal_h=yes
 ac_cv_header_stdc=yes
 ac_cv_header_stdint_h=yes
@@ -4712,7 +4439,7 @@ ac_cv_lib_l_yywrap=no
 ac_cv_objext=o
 ac_cv_path_AR=/c/Users/zeli/Apps/msys64/usr/bin/ar
 ac_cv_path_DATE=/usr/bin/date
-ac_cv_path_DOT=false
+ac_cv_path_DOT=/c/Users/zeli/Apps/msys64/mingw64/bin/dot
 ac_cv_path_ECHO=/usr/bin/echo
 ac_cv_path_ETAGS=false
 ac_cv_path_MKDIR=/usr/bin/mkdir
@@ -4782,7 +4509,7 @@ lt_lt_cv_sys_global_symbol_to_cdecl='"sed -n -e '\''s/^. .* \\(.*\\)\$/extern in
 ALLOCA=''
 AR='/c/Users/zeli/Apps/msys64/usr/bin/ar'
 ARCH=''
-BCR=''
+BCR='/home/vadve/lattner/LLVMPrograms'
 CC='gcc'
 CFLAGS='-g -O2'
 CPP='gcc -E'
@@ -4791,9 +4518,9 @@ CXX='g++'
 CXXCPP='g++ -E'
 CXXFLAGS='-g -O0'
 DATE='/usr/bin/date'
-DEFS=''
+DEFS='-DHAVE_CONFIG_H'
 DISABLE_LLC_DIFFS=''
-DOT='false'
+DOT='/c/Users/zeli/Apps/msys64/mingw64/bin/dot'
 ECHO='/usr/bin/echo'
 ECHO_C=''
 ECHO_N='-n'
@@ -4829,7 +4556,7 @@ PACKAGE_NAME='[LLVM]'
 PACKAGE_STRING='[LLVM] [1.0]'
 PACKAGE_TARNAME='--llvm--'
 PACKAGE_VERSION='[1.0]'
-PAPIDIR=''
+PAPIDIR='/home/vadve/shared/Sparc/papi-2.3.4.1'
 PATH_SEPARATOR=':'
 PURIFY=''
 PYTHON='/c/Users/zeli/AppData/Local/Continuum/anaconda2/python'
@@ -4857,7 +4584,7 @@ build_cpu='x86_64'
 build_os='none'
 build_vendor='pc'
 datadir='${prefix}/share'
-exec_prefix='NONE'
+exec_prefix='${prefix}'
 host='x86_64-pc-none'
 host_alias=''
 host_cpu='x86_64'
@@ -4871,7 +4598,7 @@ libexecdir='${exec_prefix}/libexec'
 localstatedir='${prefix}/var'
 mandir='${prefix}/man'
 oldincludedir='/usr/include'
-prefix='NONE'
+prefix='/usr/local'
 program_transform_name='s,x,x,'
 sbindir='${exec_prefix}/sbin'
 sharedstatedir='${prefix}/com'
@@ -4904,6 +4631,8 @@ target_vendor='pc'
 #define HAVE_MALLOC_H 1
 #define HAVE_MATH_H 1
 #define HAVE_MEMORY_H 1
+#define HAVE_MMAP 1
+#define HAVE_MMAP_ANONYMOUS
 #define HAVE_NAMESPACES
 #define HAVE_SIGNAL_H 1
 #define HAVE_STDINT_H 1
@@ -4940,4 +4669,4 @@ target_vendor='pc'
 #ifdef __cplusplus
 #include <stdlib.h>
 
-configure: exit 1
+configure: exit 0

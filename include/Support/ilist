@@ -1,10 +1,10 @@
 //===-- Support/ilist - Intrusive Linked List Template ----------*- C++ -*-===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file defines classes to implement an intrusive doubly linked list class
@@ -40,6 +40,7 @@
 
 #include <Support/iterator>
 #include <cassert>
+#include <iterator>
 
 template<typename NodeTy, typename Traits> class iplist;
 template<typename NodeTy> class ilist_iterator;
@@ -166,14 +167,14 @@ template<typename From> struct simplify_type;
 
 template<typename NodeTy> struct simplify_type<ilist_iterator<NodeTy> > {
   typedef NodeTy* SimpleType;
-  
+
   static SimpleType getSimplifiedValue(const ilist_iterator<NodeTy> &Node) {
     return &*Node;
   }
 };
 template<typename NodeTy> struct simplify_type<const ilist_iterator<NodeTy> > {
   typedef NodeTy* SimpleType;
-  
+
   static SimpleType getSimplifiedValue(const ilist_iterator<NodeTy> &Node) {
     return &*Node;
   }
@@ -206,8 +207,8 @@ public:
   typedef std::reverse_iterator<iterator>  reverse_iterator;
 
   iplist() : Head(this->createNode()), Tail(Head) {
-    setNext(Head, 0);
-    setPrev(Head, 0);
+    this->setNext(Head, 0);
+    this->setPrev(Head, 0);
   }
   ~iplist() { clear(); delete Tail; }
 
@@ -238,11 +239,11 @@ public:
   }
   reference back() {
     assert(!empty() && "Called back() on empty list!");
-    return *getPrev(Tail);
+    return *this->getPrev(Tail);
   }
   const_reference back() const {
     assert(!empty() && "Called back() on empty list!");
-    return *getPrev(Tail);
+    return *this->getPrev(Tail);
   }
 
   void swap(iplist &RHS) {
@@ -252,33 +253,33 @@ public:
   }
 
   iterator insert(iterator where, NodeTy *New) {
-    NodeTy *CurNode = where.getNodePtrUnchecked(), *PrevNode = getPrev(CurNode);
-    setNext(New, CurNode);
-    setPrev(New, PrevNode);
+    NodeTy *CurNode = where.getNodePtrUnchecked(), *PrevNode = this->getPrev(CurNode);
+    this->setNext(New, CurNode);
+    this->setPrev(New, PrevNode);
 
     if (PrevNode)
-      setNext(PrevNode, New);
+      this->setNext(PrevNode, New);
     else
       Head = New;
-    setPrev(CurNode, New);
+    this->setPrev(CurNode, New);
 
-    addNodeToList(New);  // Notify traits that we added a node...
+    this->addNodeToList(New);  // Notify traits that we added a node...
     return New;
   }
 
   NodeTy *remove(iterator &IT) {
     assert(IT != end() && "Cannot remove end of list!");
     NodeTy *Node = &*IT;
-    NodeTy *NextNode = getNext(Node);
-    NodeTy *PrevNode = getPrev(Node);
+    NodeTy *NextNode = this->getNext(Node);
+    NodeTy *PrevNode = this->getPrev(Node);
 
     if (PrevNode)
-      setNext(PrevNode, NextNode);
+      this->setNext(PrevNode, NextNode);
     else
       Head = NextNode;
-    setPrev(NextNode, PrevNode);
+    this->setPrev(NextNode, PrevNode);
     IT = NextNode;
-    removeNodeFromList(Node);  // Notify traits that we added a node...
+    this->removeNodeFromList(Node);  // Notify traits that we added a node...
     return Node;
   }
 
@@ -302,28 +303,28 @@ private:
     assert(first != last && "Should be checked by callers");
     if (position != last) {
       // Remove [first, last) from its old position.
-      NodeTy *First = &*first, *Prev = getPrev(First);
-      NodeTy *Next = last.getNodePtrUnchecked(), *Last = getPrev(Next);
+      NodeTy *First = &*first, *Prev = this->getPrev(First);
+      NodeTy *Next = last.getNodePtrUnchecked(), *Last = this->getPrev(Next);
       if (Prev)
-        setNext(Prev, Next);
+        this->setNext(Prev, Next);
       else
         L2.Head = Next;
-      setPrev(Next, Prev);
+      this->setPrev(Next, Prev);
 
       // Splice [first, last) into its new position.
       NodeTy *PosNext = position.getNodePtrUnchecked();
-      NodeTy *PosPrev = getPrev(PosNext);
+      NodeTy *PosPrev = this->getPrev(PosNext);
 
       // Fix head of list...
       if (PosPrev)
-        setNext(PosPrev, First);
+        this->setNext(PosPrev, First);
       else
         Head = First;
-      setPrev(First, PosPrev);
+      this->setPrev(First, PosPrev);
 
       // Fix end of list...
-      setNext(Last, PosNext);
-      setPrev(PosNext, Last);
+      this->setNext(Last, PosNext);
+      this->setPrev(PosNext, Last);
 
       transferNodesFromList(L2, First, PosNext);
     }
@@ -336,7 +337,7 @@ public:
   //
 
   size_type size() const {
-#if __GNUC__ == 3
+#if __GNUC__ >= 3
     size_type Result = std::distance(begin(), end());
 #else
     size_type Result = 0;
@@ -452,7 +453,7 @@ struct ilist : public iplist<NodeTy> {
   }
   explicit ilist(size_type count) {
     insert(this->begin(), count, NodeTy());
-  } 
+  }
   ilist(size_type count, const NodeTy &val) {
     insert(this->begin(), count, val);
   }
@@ -467,7 +468,7 @@ struct ilist : public iplist<NodeTy> {
   iterator insert(iterator a, NodeTy *b){ return iplist<NodeTy>::insert(a, b); }
   void push_front(NodeTy *a) { iplist<NodeTy>::push_front(a); }
   void push_back(NodeTy *a)  { iplist<NodeTy>::push_back(a); }
-  
+
 
   // Main implementation here - Insert for a node passed by value...
   iterator insert(iterator where, const NodeTy &val) {

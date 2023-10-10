@@ -1,10 +1,10 @@
 //===- Dominators.cpp - Dominator Calculation -----------------------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file implements simple dominator construction algorithms for finding
@@ -20,6 +20,8 @@
 #include "Support/DepthFirstIterator.h"
 #include "Support/SetOperations.h"
 
+#include <algorithm>
+
 //===----------------------------------------------------------------------===//
 //  DominatorSet Implementation
 //===----------------------------------------------------------------------===//
@@ -33,11 +35,11 @@ A("domset", "Dominator Set Construction", true);
 bool DominatorSetBase::dominates(Instruction *A, Instruction *B) const {
   BasicBlock *BBA = A->getParent(), *BBB = B->getParent();
   if (BBA != BBB) return dominates(BBA, BBB);
-  
+
   // Loop through the basic block until we find A or B.
   BasicBlock::iterator I = BBA->begin();
   for (; &*I != A && &*I != B; ++I) /*empty*/;
-  
+
   // A dominates B if it is found first in the basic block...
   return &*I == A;
 }
@@ -75,7 +77,7 @@ void DominatorSet::calculateDominatorsFromBlock(BasicBlock *RootBB) {
         assert(Roots.size() == 1 && BB == Roots[0] &&
                "We got into unreachable code somehow!");
       }
-	
+
       WorkingSet.insert(BB);           // A block always dominates itself
       DomSetType &BBSet = Doms[BB];
       if (BBSet != WorkingSet) {
@@ -154,7 +156,7 @@ void ImmediateDominatorsBase::calcIDoms(const DominatorSetBase &DS) {
   // Loop over all of the nodes that have dominators... figuring out the IDOM
   // for each node...
   //
-  for (DominatorSet::const_iterator DI = DS.begin(), DEnd = DS.end(); 
+  for (DominatorSet::const_iterator DI = DS.begin(), DEnd = DS.end();
        DI != DEnd; ++DI) {
     BasicBlock *BB = DI->first;
     const DominatorSet::DomSetType &Dominators = DI->second;
@@ -172,7 +174,7 @@ void ImmediateDominatorsBase::calcIDoms(const DominatorSetBase &DS) {
     for (; I != End; ++I) {   // Iterate over dominators...
       // All of our dominators should form a chain, where the number of elements
       // in the dominator set indicates what level the node is at in the chain.
-      // We want the node immediately above us, so it will have an identical 
+      // We want the node immediately above us, so it will have an identical
       // dominator set, except that BB will not dominate it... therefore it's
       // dominator set size will be one less than BB's...
       //
@@ -211,7 +213,7 @@ E("domtree", "Dominator Tree Construction", true);
 
 // DominatorTreeBase::reset - Free all of the tree node memory.
 //
-void DominatorTreeBase::reset() { 
+void DominatorTreeBase::reset() {
   for (NodeMapType::iterator I = Nodes.begin(), E = Nodes.end(); I != E; ++I)
     delete I->second;
   Nodes.clear();
@@ -248,7 +250,7 @@ void DominatorTree::calculate(const DominatorSet &DS) {
     const DominatorSet::DomSetType &Dominators = DS.getDominators(BB);
     unsigned DomSetSize = Dominators.size();
     if (DomSetSize == 1) continue;  // Root node... IDom = null
-      
+
     // Loop over all dominators of this node. This corresponds to looping over
     // nodes in the dominator chain, looking for a node whose dominator set is
     // equal to the current nodes, except that the current node does not exist
@@ -258,22 +260,22 @@ void DominatorTree::calculate(const DominatorSet &DS) {
     // predecessor in the depth first order that we are iterating through the
     // function.
     //
-    DominatorSet::DomSetType::const_iterator I = Dominators.begin();
+    DominatorSet::DomSetType::const_iterator II = Dominators.begin();
     DominatorSet::DomSetType::const_iterator End = Dominators.end();
-    for (; I != End; ++I) {   // Iterate over dominators...
+    for (; II != End; ++II) {   // Iterate over dominators...
       // All of our dominators should form a chain, where the number of
       // elements in the dominator set indicates what level the node is at in
       // the chain.  We want the node immediately above us, so it will have
       // an identical dominator set, except that BB will not dominate it...
       // therefore it's dominator set size will be one less than BB's...
       //
-      if (DS.getDominators(*I).size() == DomSetSize - 1) {
-        // We know that the immediate dominator should already have a node, 
+      if (DS.getDominators(*II).size() == DomSetSize - 1) {
+        // We know that the immediate dominator should already have a node,
         // because we are traversing the CFG in depth first order!
         //
-        Node *IDomNode = Nodes[*I];
+        Node *IDomNode = Nodes[*II];
         assert(IDomNode && "No node for IDOM?");
-        
+
         // Add a new tree node for this BasicBlock, and link it as a child of
         // IDomNode
         Nodes[BB] = IDomNode->addChild(new Node(BB, IDomNode));
@@ -296,7 +298,7 @@ static std::ostream &operator<<(std::ostream &o,
 static void PrintDomTree(const DominatorTreeBase::Node *N, std::ostream &o,
                          unsigned Lev) {
   o << std::string(2*Lev, ' ') << "[" << Lev << "] " << N;
-  for (DominatorTreeBase::Node::const_iterator I = N->begin(), E = N->end(); 
+  for (DominatorTreeBase::Node::const_iterator I = N->begin(), E = N->end();
        I != E; ++I)
     PrintDomTree(*I, o, Lev+1);
 }
@@ -316,7 +318,7 @@ static RegisterAnalysis<DominanceFrontier>
 G("domfrontier", "Dominance Frontier Construction", true);
 
 const DominanceFrontier::DomSetType &
-DominanceFrontier::calculate(const DominatorTree &DT, 
+DominanceFrontier::calculate(const DominatorTree &DT,
                              const DominatorTree::Node *Node) {
   // Loop over CFG successors to calculate DFlocal[Node]
   BasicBlock *BB = Node->getBlock();

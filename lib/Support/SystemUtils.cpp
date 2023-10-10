@@ -1,10 +1,10 @@
 //===- SystemUtils.h - Utilities to do low-level system stuff --*- C++ -*--===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file contains functions used to do a variety of low-level, often
@@ -35,12 +35,15 @@ bool isExecutableFile(const std::string &ExeFileName) {
   if (!(Buf.st_mode & S_IFREG))
     return false;                    // Not a regular file?
 
+  return true;
+  /*
   if (Buf.st_uid == getuid())        // Owner of file?
     return Buf.st_mode & S_IXUSR;
   else if (Buf.st_gid == getgid())   // In group of file?
     return Buf.st_mode & S_IXGRP;
   else                               // Unrelated to file?
     return Buf.st_mode & S_IXOTH;
+  */
 }
 
 /// FindExecutable - Find a named executable, giving the argv[0] of program
@@ -48,7 +51,7 @@ bool isExecutableFile(const std::string &ExeFileName) {
 /// into the same directory, but that directory is neither the current
 /// directory, nor in the PATH.  If the executable cannot be found, return an
 /// empty string.
-/// 
+///
 std::string FindExecutable(const std::string &ExeName,
                            const std::string &ProgramPath) {
   // First check the directory that bugpoint is in.  We can do this if
@@ -74,12 +77,12 @@ std::string FindExecutable(const std::string &ExeName,
   while (PathLen) {
     // Find the first colon...
     const char *Colon = std::find(PathStr, PathStr+PathLen, ':');
-    
+
     // Check to see if this first directory contains the executable...
     std::string FilePath = std::string(PathStr, Colon) + '/' + ExeName;
     if (isExecutableFile(FilePath))
       return FilePath;                    // Found the executable!
-   
+
     // Nope it wasn't in this directory, check the next range!
     PathLen -= Colon-PathStr;
     PathStr = Colon;
@@ -121,6 +124,8 @@ int RunProgramWithTimeout(const std::string &ProgramPath, const char **Args,
 
   // FIXME: install sigalarm handler here for timeout...
 
+  return 0;
+  /*
   int Child = fork();
   switch (Child) {
   case -1:
@@ -163,6 +168,7 @@ int RunProgramWithTimeout(const std::string &ProgramPath, const char **Args,
     exit(1);
   }
   return Status;
+  */
 }
 
 
@@ -205,12 +211,14 @@ int RunProgramWithTimeout(const std::string &ProgramPath, const char **Args,
 int
 ExecWait (const char * const old_argv[], const char * const old_envp[])
 {
+  return 0;
+  /*
   // Child process ID
   register int child;
 
   // Status from child process when it exits
   int status;
- 
+
   //
   // Create local versions of the parameters that can be passed into execve()
   // without creating const problems.
@@ -270,5 +278,5 @@ ExecWait (const char * const old_argv[], const char * const old_envp[])
   // Otherwise, return failure.
   //
   return 1;
+  */
 }
-

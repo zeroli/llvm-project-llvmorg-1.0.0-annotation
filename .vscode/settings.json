@@ -3,6 +3,8 @@
     "files.associations": {
         "*.cu": "cpp",
         "ilist": "cpp",
-        "*.def": "cpp"
-    }
+        "*.def": "cpp",
+        "iterator": "cpp"
+    },
+    "cmake.sourceDirectory": "C:/Users/zeli/opencode/llvm-project-llvmorg-1.0.0-annotation/lib/Support"
 }

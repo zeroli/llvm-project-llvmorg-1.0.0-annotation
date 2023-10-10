@@ -1,10 +1,10 @@
 //===- llvm/Analysis/Dominators.h - Dominator Info Calculation --*- C++ -*-===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file defines the following classes:
@@ -13,13 +13,13 @@
 //     and their immediate dominator.
 //  3. DominatorTree: Represent the ImmediateDominator as an explicit tree
 //     structure.
-//  4. DominanceFrontier: Calculate and hold the dominance frontier for a 
+//  4. DominanceFrontier: Calculate and hold the dominance frontier for a
 //     function.
 //
 //  These data structures are listed in increasing order of complexity.  It
-//  takes longer to calculate the dominator frontier, for example, than the 
+//  takes longer to calculate the dominator frontier, for example, than the
 //  ImmediateDominator mapping.
-// 
+//
 //===----------------------------------------------------------------------===//
 
 #ifndef LLVM_ANALYSIS_DOMINATORS_H
@@ -286,7 +286,7 @@ public:
     inline Node *getIDom() const { return IDom; }
     inline const std::vector<Node*> &getChildren() const { return Children; }
 
-    // dominates - Returns true iff this dominates N.  Note that this is not a 
+    // dominates - Returns true iff this dominates N.  Note that this is not a
     // constant time operation!
     inline bool dominates(const Node *N) const {
       const Node *IDom;
@@ -296,7 +296,7 @@ public:
     }
 
   private:
-    inline Node(BasicBlock *BB, Node *iDom) 
+    inline Node(BasicBlock *BB, Node *iDom)
       : TheBB(BB), IDom(iDom) {}
     inline Node *addChild(Node *C) { Children.push_back(C); return C; }
 
@@ -348,9 +348,9 @@ public:
   /// changeImmediateDominator - This method is used to update the dominator
   /// tree information when a node's immediate dominator changes.
   ///
-  void changeImmediateDominator(Node *Node, Node *NewIDom) {
-    assert(Node && NewIDom && "Cannot change null node pointers!");
-    Node->setIDom(NewIDom);
+  void changeImmediateDominator(Node *node, Node *NewIDom) {
+    assert(node && NewIDom && "Cannot change null node pointers!");
+    node->setIDom(NewIDom);
   }
 
   /// print - Convert to human readable form

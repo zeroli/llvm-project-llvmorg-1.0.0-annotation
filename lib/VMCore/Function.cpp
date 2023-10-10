@@ -1,10 +1,10 @@
 //===-- Function.cpp - Implement the Global object classes ----------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file implements the Function & GlobalVariable classes for the VMCore
@@ -43,14 +43,14 @@ iplist<Argument> &ilist_traits<Argument>::getList(Function *F) {
 
 // Explicit instantiations of SymbolTableListTraits since some of the methods
 // are not in the public header file...
-template SymbolTableListTraits<Argument, Function, Function>;
-template SymbolTableListTraits<BasicBlock, Function, Function>;
+template class SymbolTableListTraits<Argument, Function, Function>;
+template class SymbolTableListTraits<BasicBlock, Function, Function>;
 
 //===----------------------------------------------------------------------===//
 // Argument Implementation
 //===----------------------------------------------------------------------===//
 
-Argument::Argument(const Type *Ty, const std::string &Name, Function *Par) 
+Argument::Argument(const Type *Ty, const std::string &Name, Function *Par)
   : Value(Ty, Value::ArgumentVal, Name) {
   Parent = 0;
 
@@ -139,7 +139,7 @@ const FunctionType *Function::getFunctionType() const {
   return cast<FunctionType>(getType()->getElementType());
 }
 
-const Type *Function::getReturnType() const { 
+const Type *Function::getReturnType() const {
   return getFunctionType()->getReturnType();
 }
 
@@ -148,7 +148,7 @@ const Type *Function::getReturnType() const {
 // 'delete' a whole class at a time, even though there may be circular
 // references... first all references are dropped, and all use counts go to
 // zero.  Then everything is deleted for real.  Note that no operations are
-// valid on an object that has "dropped all references", except operator 
+// valid on an object that has "dropped all references", except operator
 // delete.
 //
 void Function::dropAllReferences() {
@@ -170,10 +170,10 @@ unsigned Function::getIntrinsicID() const {
     return 0;  // All intrinsics start with 'llvm.'
 
   assert(getName().size() != 5 && "'llvm.' is an invalid intrinsic name!");
-  
+
   // a table of all Alpha intrinsic functions
   struct {
-   std::string name;  // The name of the intrinsic 
+   std::string name;  // The name of the intrinsic
    unsigned id;       // Its ID number
   } alpha_intrinsics[] = {
      { "llvm.alpha.ctlz",      LLVMIntrinsic::alpha_ctlz },
@@ -184,7 +184,7 @@ unsigned Function::getIntrinsicID() const {
      { "llvm.alpha.pup",       LLVMIntrinsic::alpha_pup },
      { "llvm.alpha.bytezap",   LLVMIntrinsic::alpha_bytezap },
      { "llvm.alpha.bytemanip", LLVMIntrinsic::alpha_bytemanip },
-     { "llvm.alpha.dfp_bop",   LLVMIntrinsic::alpha_dfpbop }, 
+     { "llvm.alpha.dfp_bop",   LLVMIntrinsic::alpha_dfpbop },
      { "llvm.alpha.dfp_uop",   LLVMIntrinsic::alpha_dfpuop },
      { "llvm.alpha.unordered", LLVMIntrinsic::alpha_unordered },
      { "llvm.alpha.uqtodfp",   LLVMIntrinsic::alpha_uqtodfp },
@@ -192,7 +192,7 @@ unsigned Function::getIntrinsicID() const {
      { "llvm.alpha.dfptosq",   LLVMIntrinsic::alpha_dfptosq },
      { "llvm.alpha.sfptosq",   LLVMIntrinsic::alpha_sfptosq },
   };
-  const unsigned num_alpha_intrinsics = 
+  const unsigned num_alpha_intrinsics =
                  sizeof(alpha_intrinsics) / sizeof(*alpha_intrinsics);
 
   switch (getName()[5]) {

@@ -1,10 +1,10 @@
 //===-- CommandLine.cpp - Command line parser implementation --------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This class implements a command line argument processor that is useful when
@@ -23,6 +23,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cerrno>
+#include <cstring>
 
 using namespace cl;
 
@@ -63,7 +64,7 @@ static void AddArgument(const char *ArgName, Option *Opt) {
 
 // RemoveArgument - It's possible that the argument is no longer in the map if
 // options have already been processed and the map has been deleted!
-// 
+//
 static void RemoveArgument(const char *ArgName, Option *Opt) {
   if (CommandLineOptions == 0) return;
   assert(getOption(ArgName) == Opt && "Arg not in map!");
@@ -93,11 +94,11 @@ static inline bool ProvideOption(Option *Handler, const char *ArgName,
     break;
   case ValueDisallowed:
     if (*Value != 0)
-      return Handler->error(" does not allow a value! '" + 
+      return Handler->error(" does not allow a value! '" +
                             std::string(Value) + "' specified.");
     break;
   case ValueOptional: break;
-  default: std::cerr << "Bad ValueMask flag! CommandLine usage error:" 
+  default: std::cerr << "Bad ValueMask flag! CommandLine usage error:"
                      << Handler->getValueExpectedFlag() << "\n"; abort();
   }
 
@@ -127,7 +128,7 @@ static inline bool isPrefixedOrGrouping(const Option *O) {
 //
 static Option *getOptionPred(std::string Name, unsigned &Length,
                              bool (*Pred)(const Option*)) {
-  
+
   Option *Op = getOption(Name);
   if (Op && Pred(Op)) {
     Length = Name.length();
@@ -216,7 +217,7 @@ void cl::ParseEnvironmentOptions (const char *progName, const char *envVar,
   // Check args.
   assert (progName && "Program name not specified");
   assert (envVar && "Environment variable name missing");
-  
+
   // Get the environment variable they want us to parse options out of.
   const char *envValue = getenv (envVar);
   if (!envValue)
@@ -323,7 +324,7 @@ void cl::ParseCommandLineOptions(int &argc, char **argv,
         // All of the positional arguments have been fulfulled, give the rest to
         // the consume after option... if it's specified...
         //
-        if (PositionalVals.size() >= NumPositionalRequired && 
+        if (PositionalVals.size() >= NumPositionalRequired &&
             ConsumeAfterOpt != 0) {
           for (++i; i < argc; ++i)
             PositionalVals.push_back(argv[i]);
@@ -440,7 +441,7 @@ void cl::ParseCommandLineOptions(int &argc, char **argv,
     // active one...
     if (Handler->getFormattingFlag() == cl::Positional)
       ActivePositionalArg = Handler;
-    else 
+    else
       ErrorParsing |= ProvideOption(Handler, ArgName, Value, argc, argv, i);
   }
 
@@ -497,7 +498,7 @@ void cl::ParseCommandLineOptions(int &argc, char **argv,
     if (PositionalOpts.size() == 2 && ValNo == 0 && !PositionalVals.empty())
       ErrorParsing |= ProvidePositionalOption(PositionalOpts[1],
                                               PositionalVals[ValNo++]);
-    
+
     // Handle over all of the rest of the arguments to the
     // cl::ConsumeAfter command line option...
     for (; ValNo != PositionalVals.size(); ++ValNo)
@@ -506,7 +507,7 @@ void cl::ParseCommandLineOptions(int &argc, char **argv,
   }
 
   // Loop over args and make sure all required args are specified!
-  for (std::map<std::string, Option*>::iterator I = Opts.begin(), 
+  for (std::map<std::string, Option*>::iterator I = Opts.begin(),
          E = Opts.end(); I != E; ++I) {
     switch (I->second->getNumOccurrencesFlag()) {
     case Required:
@@ -642,7 +643,7 @@ unsigned basic_parser_impl::getOptionWidth(const Option &O) const {
   return Len + 6;
 }
 
-// printOptionInfo - Print out information about this option.  The 
+// printOptionInfo - Print out information about this option.  The
 // to-be-maintained width is specified.
 //
 void basic_parser_impl::printOptionInfo(const Option &O,
@@ -663,7 +664,7 @@ void basic_parser_impl::printOptionInfo(const Option &O,
 //
 bool parser<bool>::parse(Option &O, const char *ArgName,
                          const std::string &Arg, bool &Value) {
-  if (Arg == "" || Arg == "true" || Arg == "TRUE" || Arg == "True" || 
+  if (Arg == "" || Arg == "true" || Arg == "TRUE" || Arg == "True" ||
       Arg == "1") {
     Value = true;
   } else if (Arg == "false" || Arg == "FALSE" || Arg == "False" || Arg == "0") {
@@ -681,7 +682,7 @@ bool parser<int>::parse(Option &O, const char *ArgName,
                         const std::string &Arg, int &Value) {
   char *End;
   Value = (int)strtol(Arg.c_str(), &End, 0);
-  if (*End != 0) 
+  if (*End != 0)
     return O.error(": '" + Arg + "' value invalid for integer argument!");
   return false;
 }
@@ -707,7 +708,7 @@ static bool parseDouble(Option &O, const std::string &Arg, double &Value) {
   const char *ArgStart = Arg.c_str();
   char *End;
   Value = strtod(ArgStart, &End);
-  if (*End != 0) 
+  if (*End != 0)
     return O.error(": '" +Arg+ "' value invalid for floating point argument!");
   return false;
 }
@@ -762,7 +763,7 @@ unsigned generic_parser_base::getOptionWidth(const Option &O) const {
   }
 }
 
-// printOptionInfo - Print out information about this option.  The 
+// printOptionInfo - Print out information about this option.  The
 // to-be-maintained width is specified.
 //
 void generic_parser_base::printOptionInfo(const Option &O,
@@ -779,7 +780,7 @@ void generic_parser_base::printOptionInfo(const Option &O,
     }
   } else {
     if (O.HelpStr[0])
-      std::cerr << "  " << O.HelpStr << "\n"; 
+      std::cerr << "  " << O.HelpStr << "\n";
     for (unsigned i = 0, e = getNumOptions(); i != e; ++i) {
       unsigned L = std::strlen(getOption(i));
       std::cerr << "    -" << getOption(i) << std::string(GlobalWidth-L-8, ' ')
@@ -820,7 +821,7 @@ public:
     copy(getOpts().begin(), getOpts().end(), std::back_inserter(Options));
 
     // Eliminate Hidden or ReallyHidden arguments, depending on ShowHidden
-    Options.erase(std::remove_if(Options.begin(), Options.end(), 
+    Options.erase(std::remove_if(Options.begin(), Options.end(),
                          std::ptr_fun(ShowHidden ? isReallyHidden : isHidden)),
                   Options.end());
 
@@ -878,7 +879,7 @@ public:
 HelpPrinter NormalPrinter(false);
 HelpPrinter HiddenPrinter(true);
 
-cl::opt<HelpPrinter, true, parser<bool> > 
+cl::opt<HelpPrinter, true, parser<bool> >
 HOp("help", cl::desc("display available options (--help-hidden for more)"),
     cl::location(NormalPrinter), cl::ValueDisallowed);
 
