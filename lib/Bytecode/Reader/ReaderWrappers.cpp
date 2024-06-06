@@ -1,10 +1,10 @@
 //===- ReaderWrappers.cpp - Parse bytecode from file or buffer  -----------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file implements loading and parsing a bytecode file and parsing a
@@ -20,7 +20,7 @@
 #include <sys/stat.h>
 #include "Config/unistd.h"
 #include "Config/sys/mman.h"
-
+#include <memory>
 //===----------------------------------------------------------------------===//
 // BytecodeFileReader - Read from an mmap'able file descriptor.
 //
@@ -67,23 +67,29 @@ BytecodeFileReader::BytecodeFileReader(const std::string &Filename) {
 
   // mmap in the file all at once...
   Length = StatBuf.st_size;
+  #if 0
   Buffer = (unsigned char*)mmap(0, Length, PROT_READ, MAP_PRIVATE, FD, 0);
 
   if (Buffer == (unsigned char*)MAP_FAILED)
     throw std::string("Error mmapping file!");
+  #else
+  Buffer = new unsigned char[Length];
+  #endif
 
   try {
     // Parse the bytecode we mmapped in
     ParseBytecode(Buffer, Length, Filename);
   } catch (...) {
-    munmap((char*)Buffer, Length);
+    //munmap((char*)Buffer, Length);
+    delete [] Buffer;
     throw;
   }
 }
 
 BytecodeFileReader::~BytecodeFileReader() {
   // Unmmap the bytecode...
-  munmap((char*)Buffer, Length);
+  //munmap((char*)Buffer, Length);
+  delete [] Buffer;
 }
 
 //===----------------------------------------------------------------------===//
@@ -144,7 +150,7 @@ BytecodeBufferReader::~BytecodeBufferReader() {
 
 namespace {
   /// BytecodeStdinReader - parses a bytecode file from stdin
-  /// 
+  ///
   class BytecodeStdinReader : public BytecodeParser {
   private:
     std::vector<unsigned char> FileData;
@@ -166,7 +172,7 @@ BytecodeStdinReader::BytecodeStdinReader() {
   while ((BlockSize = read(0 /*stdin*/, Buffer, 4096*4))) {
     if (BlockSize == -1)
       throw std::string("Error reading from stdin!");
-    
+
     FileData.insert(FileData.end(), Buffer, Buffer+BlockSize);
   }
 
@@ -185,7 +191,7 @@ BytecodeStdinReader::BytecodeStdinReader() {
 // new style varargs for backwards compatibility.
 static ModuleProvider *CheckVarargs(ModuleProvider *MP) {
   Module *M = MP->getModule();
-  
+
   // Check to see if va_start takes arguments...
   Function *F = M->getNamedFunction("llvm.va_start");
   if (F == 0) return MP;  // No varargs use, just return.
@@ -201,11 +207,11 @@ static ModuleProvider *CheckVarargs(ModuleProvider *MP) {
   // the user.
   if (Function *F = M->getNamedFunction("llvm.va_start")) {
     assert(F->asize() == 1 && "Obsolete va_start takes 1 argument!");
-        
+
     const Type *RetTy = F->getFunctionType()->getParamType(0);
     RetTy = cast<PointerType>(RetTy)->getElementType();
     Function *NF = M->getOrInsertFunction("llvm.va_start", RetTy, 0);
-        
+
     for (Value::use_iterator I = F->use_begin(), E = F->use_end(); I != E; )
       if (CallInst *CI = dyn_cast<CallInst>(*I++)) {
         Value *V = new CallInst(NF, "", CI);
@@ -221,7 +227,7 @@ static ModuleProvider *CheckVarargs(ModuleProvider *MP) {
     ArgTy = cast<PointerType>(ArgTy)->getElementType();
     Function *NF = M->getOrInsertFunction("llvm.va_end", Type::VoidTy,
                                                   ArgTy, 0);
-        
+
     for (Value::use_iterator I = F->use_begin(), E = F->use_end(); I != E; )
       if (CallInst *CI = dyn_cast<CallInst>(*I++)) {
         Value *V = new LoadInst(CI->getOperand(1), "", CI);
@@ -230,14 +236,14 @@ static ModuleProvider *CheckVarargs(ModuleProvider *MP) {
       }
     F->setName("");
   }
-      
+
   if (Function *F = M->getNamedFunction("llvm.va_copy")) {
     assert(F->asize() == 2 && "Obsolete va_copy takes 2 argument!");
     const Type *ArgTy = F->getFunctionType()->getParamType(0);
     ArgTy = cast<PointerType>(ArgTy)->getElementType();
     Function *NF = M->getOrInsertFunction("llvm.va_copy", ArgTy,
                                                   ArgTy, 0);
-        
+
     for (Value::use_iterator I = F->use_begin(), E = F->use_end(); I != E; )
       if (CallInst *CI = dyn_cast<CallInst>(*I++)) {
         Value *V = new CallInst(NF, CI->getOperand(2), "", CI);
@@ -256,7 +262,7 @@ static ModuleProvider *CheckVarargs(ModuleProvider *MP) {
 
 /// getBytecodeBufferModuleProvider - lazy function-at-a-time loading from a
 /// buffer
-ModuleProvider* 
+ModuleProvider*
 getBytecodeBufferModuleProvider(const unsigned char *Buffer, unsigned Length,
                                 const std::string &ModuleID) {
   return CheckVarargs(new BytecodeBufferReader(Buffer, Length, ModuleID));

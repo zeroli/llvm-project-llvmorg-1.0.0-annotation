@@ -326,7 +326,7 @@ private:
       this->setNext(Last, PosNext);
       this->setPrev(PosNext, Last);
 
-      transferNodesFromList(L2, First, PosNext);
+      this->transferNodesFromList(L2, First, PosNext);
     }
   }
 
@@ -472,7 +472,7 @@ struct ilist : public iplist<NodeTy> {
 
   // Main implementation here - Insert for a node passed by value...
   iterator insert(iterator where, const NodeTy &val) {
-    return insert(where, createNode(val));
+    return this->insert(where, this->createNode(val));
   }
 
 

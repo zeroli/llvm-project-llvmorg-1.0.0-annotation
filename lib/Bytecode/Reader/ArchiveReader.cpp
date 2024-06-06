@@ -1,10 +1,10 @@
 //===- ArchiveReader.cpp - Code to read LLVM bytecode from .a files -------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file implements the ReadArchiveFile interface, which allows a linker to
@@ -67,7 +67,7 @@ static bool ParseLongFilenameSection(unsigned char *Buffer, unsigned Size,
                                      std::string *S) {
   if (!LongFilenames.empty())
     return Error(S, "archive file contains multiple long filename entries");
-                 
+
   while (Size) {
     // Long filename entries are newline delimited to keep the archive readable.
     unsigned char *Ptr = (unsigned char*)memchr(Buffer, '\n', Size);
@@ -79,12 +79,12 @@ static bool ParseLongFilenameSection(unsigned char *Buffer, unsigned Size,
 
     unsigned char *End = Ptr;
     if (End[-1] == '/') --End; // Remove trailing / from name
-    
+
     LongFilenames.push_back(std::string(Buffer, End));
     Size -= Ptr-Buffer+1;
     Buffer = Ptr+1;
   }
-  
+
   return false;
 }
 
@@ -146,30 +146,37 @@ bool ReadArchiveFile(const std::string &Filename, std::vector<Module*> &Objects,
   int FD = open(Filename.c_str(), O_RDONLY);
   if (FD == -1)
     return Error(ErrorStr, "Error opening file!");
-  
+
   // Stat the file to get its length...
   struct stat StatBuf;
   if (fstat(FD, &StatBuf) == -1 || StatBuf.st_size == 0)
     return Error(ErrorStr, "Error stat'ing file!");
-  
+
     // mmap in the file all at once...
   int Length = StatBuf.st_size;
-  unsigned char *Buffer = (unsigned char*)mmap(0, Length, PROT_READ, 
+  #if 0
+  unsigned char *Buffer = (unsigned char*)mmap(0, Length, PROT_READ,
                                                MAP_PRIVATE, FD, 0);
   if (Buffer == (unsigned char*)MAP_FAILED)
     return Error(ErrorStr, "Error mmapping file!");
-  
+  #else
+  unsigned char *Buffer = new unsigned char[Length];
+  #endif
   // Parse the archive files we mmap'ped in
   bool Result = ReadArchiveBuffer(Filename, Buffer, Length, Objects, ErrorStr);
-  
+
   // Unmmap the archive...
+  #if 0
   munmap((char*)Buffer, Length);
+  #else
+  delete [] Buffer;
+  #endif
 
   if (Result)    // Free any loaded objects
     while (!Objects.empty()) {
       delete Objects.back();
       Objects.pop_back();
     }
-  
+
   return Result;
 }

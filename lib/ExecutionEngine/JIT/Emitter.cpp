@@ -1,10 +1,10 @@
 //===-- Emitter.cpp - Write machine code to executable memory -------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file defines a MachineCodeEmitter object that is used by Jello to write
@@ -44,10 +44,10 @@ namespace {
     unsigned char *CurStubPtr, *CurFunctionPtr;
   public:
     JITMemoryManager();
-    
+
     inline unsigned char *allocateStub(unsigned StubSize);
     inline unsigned char *startFunctionBody();
-    inline void endFunctionBody(unsigned char *FunctionEnd);    
+    inline void endFunctionBody(unsigned char *FunctionEnd);
   };
 }
 
@@ -55,6 +55,9 @@ namespace {
 // mapped as executable readable and writable.
 static void *getMemory(unsigned NumBytes) {
   if (NumBytes == 0) return 0;
+#if 1
+  return new char[NumBytes];
+#else
   static const long pageSize = sysconf(_SC_PAGESIZE);
   unsigned NumPages = (NumBytes+pageSize-1)/pageSize;
 
@@ -75,7 +78,7 @@ static void *getMemory(unsigned NumBytes) {
 #else
 #define fd -1
 #endif
-  
+
   unsigned mmapFlags = MAP_PRIVATE|MAP_ANONYMOUS;
 #ifdef MAP_NORESERVE
   mmapFlags |= MAP_NORESERVE;
@@ -88,6 +91,7 @@ static void *getMemory(unsigned NumBytes) {
     abort();
   }
   return pa;
+#endif
 }
 
 JITMemoryManager::JITMemoryManager() {

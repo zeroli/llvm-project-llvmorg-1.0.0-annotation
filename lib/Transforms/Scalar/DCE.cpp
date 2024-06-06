@@ -1,10 +1,10 @@
 //===- DCE.cpp - Code to perform dead code elimination --------------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file implements dead inst elimination and dead code elimination.
@@ -48,7 +48,7 @@ namespace {
       AU.setPreservesCFG();
     }
   };
-  
+
   RegisterOpt<DeadInstElimination> X("die", "Dead Instruction Elimination");
 }
 
@@ -78,7 +78,7 @@ bool DCE::runOnFunction(Function &F) {
   // Start out with all of the instructions in the worklist...
   std::vector<Instruction*> WorkList(inst_begin(F), inst_end(F));
   std::set<Instruction*> DeadInsts;
-  
+
   // Loop over the worklist finding instructions that are dead.  If they are
   // dead make them drop all of their uses, making other instructions
   // potentially dead, and work until the worklist is empty.
@@ -86,12 +86,14 @@ bool DCE::runOnFunction(Function &F) {
   while (!WorkList.empty()) {
     Instruction *I = WorkList.back();
     WorkList.pop_back();
-    
+
     if (isInstructionTriviallyDead(I)) {       // If the instruction is dead...
       // Loop over all of the values that the instruction uses, if there are
       // instructions being used, add them to the worklist, because they might
       // go dead after this one is removed.
-      //
+      // ZERO: 这段代码有问题
+      // isInstructionTriviallyDead已经知道use_empty了，没有其它Value use这条指令了
+      // 这里应该loop op_begin()/op_end()，判断操作数
       for (User::use_iterator UI = I->use_begin(), UE = I->use_end();
            UI != UE; ++UI)
         if (Instruction *Used = dyn_cast<Instruction>(*UI))

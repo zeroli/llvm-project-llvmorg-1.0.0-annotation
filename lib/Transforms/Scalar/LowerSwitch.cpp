@@ -1,10 +1,10 @@
 //===- LowerSwitch.cpp - Eliminate Switch instructions --------------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // The LowerSwitch transformation rewrites switch statements with a sequence of
@@ -22,6 +22,7 @@
 #include "llvm/Pass.h"
 #include "Support/Debug.h"
 #include "Support/Statistic.h"
+#include <algorithm>
 
 namespace {
   Statistic<> NumLowered("lowerswitch", "Number of SwitchInst's replaced");

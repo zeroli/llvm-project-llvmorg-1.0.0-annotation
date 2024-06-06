@@ -1,10 +1,10 @@
 //===-- llvm/CodeGen/ValueSet.h ---------------------------------*- C++ -*-===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This header is OBSOLETE, do not use it for new code.
@@ -17,9 +17,11 @@
 #define VALUE_SET_H
 
 #include <set>
+#include <ostream>
+
 class Value;
 
-// RAV - Used to print values in a form used by the register allocator.  
+// RAV - Used to print values in a form used by the register allocator.
 //
 struct RAV {  // Register Allocator Value
   const Value &V;

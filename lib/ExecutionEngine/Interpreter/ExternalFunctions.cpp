@@ -1,16 +1,16 @@
 //===-- ExternalFunctions.cpp - Implement External Functions --------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
-// 
+//
 //  This file contains both code to deal with invoking "external" functions, but
 //  also contains code that implements "exported" external functions.
 //
-//  External functions in the interpreter are implemented by 
+//  External functions in the interpreter are implemented by
 //  using the system's dynamic loader to look up the address of the function
 //  we want to invoke.  If a function is found, then one of the
 //  many lle_* wrapper functions in this file will translate its arguments from
@@ -30,6 +30,10 @@
 #include "Config/link.h"
 #include <cmath>
 #include <map>
+#include <cstring>
+
+using namespace std;
+
 using std::vector;
 
 typedef GenericValue (*ExFunc)(FunctionType *, const vector<GenericValue> &);
@@ -221,7 +225,7 @@ GenericValue lle_X_floor(FunctionType *M, const vector<GenericValue> &Args) {
 GenericValue lle_X_drand48(FunctionType *M, const vector<GenericValue> &Args) {
   assert(Args.size() == 0);
   GenericValue GV;
-  GV.DoubleVal = drand48();
+  GV.DoubleVal = rand();
   return GV;
 }
 
@@ -229,14 +233,14 @@ GenericValue lle_X_drand48(FunctionType *M, const vector<GenericValue> &Args) {
 GenericValue lle_X_lrand48(FunctionType *M, const vector<GenericValue> &Args) {
   assert(Args.size() == 0);
   GenericValue GV;
-  GV.IntVal = lrand48();
+  GV.IntVal = rand();
   return GV;
 }
 
 // void srand48(long)
 GenericValue lle_X_srand48(FunctionType *M, const vector<GenericValue> &Args) {
   assert(Args.size() == 1);
-  srand48(Args[0].IntVal);
+  srand(Args[0].IntVal);
   return GenericValue();
 }
 
@@ -290,7 +294,7 @@ GenericValue lle_X_sprintf(FunctionType *M, const vector<GenericValue> &Args) {
         Last = *FB++ = *FmtStr++;
       }
       *FB = 0;
-      
+
       switch (Last) {
       case '%':
         sprintf(Buffer, FmtBuf); break;
@@ -317,7 +321,7 @@ GenericValue lle_X_sprintf(FunctionType *M, const vector<GenericValue> &Args) {
         sprintf(Buffer, FmtBuf, Args[ArgNo++].DoubleVal); break;
       case 'p':
         sprintf(Buffer, FmtBuf, (void*)GVTOP(Args[ArgNo++])); break;
-      case 's': 
+      case 's':
         sprintf(Buffer, FmtBuf, (char*)GVTOP(Args[ArgNo++])); break;
       default:  std::cout << "<unknown printf code '" << *FmtStr << "'!>";
         ArgNo++; break;
@@ -452,7 +456,7 @@ GenericValue lle_X_scanf(FunctionType *M, const vector<GenericValue> &args) {
 
 // int clock(void) - Profiling implementation
 GenericValue lle_i_clock(FunctionType *M, const vector<GenericValue> &Args) {
-  extern int clock(void);
+  //extern int clock(void);
   GenericValue GV; GV.IntVal = clock();
   return GV;
 }
@@ -466,14 +470,14 @@ GenericValue lle_i_clock(FunctionType *M, const vector<GenericValue> &Args) {
 GenericValue lle_X_strcmp(FunctionType *M, const vector<GenericValue> &Args) {
   assert(Args.size() == 2);
   GenericValue Ret;
-  Ret.IntVal = strcmp((char*)GVTOP(Args[0]), (char*)GVTOP(Args[1]));
+  Ret.IntVal = std::strcmp((char*)GVTOP(Args[0]), (char*)GVTOP(Args[1]));
   return Ret;
 }
 
 // char *strcat(char *Dest, const char *src);
 GenericValue lle_X_strcat(FunctionType *M, const vector<GenericValue> &Args) {
   assert(Args.size() == 2);
-  return PTOGV(strcat((char*)GVTOP(Args[0]), (char*)GVTOP(Args[1])));
+  return PTOGV(std::strcat((char*)GVTOP(Args[0]), (char*)GVTOP(Args[1])));
 }
 
 // char *strcpy(char *Dest, const char *src);
@@ -524,7 +528,7 @@ GenericValue lle_X_memcpy(FunctionType *M, const vector<GenericValue> &Args) {
 // transformation, but if the program refers to stdio, stderr, stdin then they
 // have pointers that are relative to the __iob array.  If this is the case,
 // change the FILE into the REAL stdio stream.
-// 
+//
 static FILE *getFILE(void *Ptr) {
   static Module *LastMod = 0;
   static PointerTy IOBBase = 0;
@@ -551,7 +555,7 @@ static FILE *getFILE(void *Ptr) {
     // held in is...
     if (IOB) {
       // Get the address the array lives in...
-      GlobalAddress *Address = 
+      GlobalAddress *Address =
         (GlobalAddress*)IOB->getOrCreateAnnotation(GlobalAddressAID);
       IOBBase = (PointerTy)(GenericValue*)Address->Ptr;
 
@@ -568,7 +572,7 @@ static FILE *getFILE(void *Ptr) {
 
   // Check to see if this is a reference to __iob...
   if (IOBBase) {
-    unsigned FDNum = ((unsigned long)Ptr-IOBBase)/FILESize;
+    unsigned FDNum = ((uintptr_t)Ptr-IOBBase)/FILESize;
     if (FDNum == 0)
       return stdin;
     else if (FDNum == 1)

@@ -1,13 +1,13 @@
 //===- CallGraph.cpp - Build a Module's call graph ------------------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
-// This interface is used to build and manipulate a call graph, which is a very 
+// This interface is used to build and manipulate a call graph, which is a very
 // useful tool for interprocedural optimization.
 //
 // Every function in a module is represented as a node in the call graph.  The
@@ -50,6 +50,7 @@
 #include "llvm/iOther.h"
 #include "llvm/iTerminators.h"
 #include "Support/STLExtras.h"
+#include <algorithm>
 
 static RegisterAnalysis<CallGraph> X("callgraph", "Call Graph Construction");
 
@@ -67,7 +68,7 @@ static const char * const KnownExternalFunctions[] = {
   "abort",
   "getenv",
   "putenv",
-  
+
   // Standard IO functions
   "printf",
   "sprintf",
@@ -102,7 +103,7 @@ static const char * const KnownExternalFunctions[] = {
   "realloc",
   "calloc",
   "memalign",
-  
+
   // String functions
   "atoi",
   "memmove",
@@ -137,7 +138,7 @@ static const char * const KnownExternalFunctions[] = {
   "dcgettext",
   "textdomain",
   "bindtextdomain",
-  
+
   // Random stuff
   "__assert_fail",
   "__errno_location",
@@ -202,10 +203,10 @@ void CallGraph::addToCallGraph(Function *F) {
         Root = Node;          // Found a main, keep track of it!
     }
   }
-  
+
   // If this function is not defined in this translation unit, it could call
   // anything.
-  if (F->isExternal() && !F->getIntrinsicID() && 
+  if (F->isExternal() && !F->getIntrinsicID() &&
       !ExternalFunctionDoesntCallIntoProgram(F->getName()))
     Node->addCalledFunction(ExternalNode);
 
@@ -249,7 +250,7 @@ bool CallGraph::run(Module &M) {
 
   // If we didn't find a main function, use the external call graph node
   if (Root == 0) Root = ExternalNode;
-  
+
   return false;
 }
 
@@ -281,7 +282,7 @@ void CallGraph::print(std::ostream &o, const Module *M) const {
     o << getRoot()->getFunction()->getName() << "\n";
   else
     o << "<<null function: 0x" << getRoot() << ">>\n";
-  
+
   for (CallGraph::const_iterator I = begin(), E = end(); I != E; ++I)
     WriteToOutput(I->second, o);
 }
@@ -315,4 +316,3 @@ Function *CallGraph::removeFunctionFromModule(CallGraphNode *CGN) {
   Mod->getFunctionList().remove(F);
   return F;
 }
-

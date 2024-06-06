@@ -1,10 +1,10 @@
 //===- PostDominators.cpp - Post-Dominator Calculation --------------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file implements the post-dominator construction algorithms.
@@ -16,6 +16,7 @@
 #include "llvm/Support/CFG.h"
 #include "Support/DepthFirstIterator.h"
 #include "Support/SetOperations.h"
+#include <algorithm>
 
 //===----------------------------------------------------------------------===//
 //  PostDominatorSet Implementation
@@ -73,11 +74,15 @@ bool PostDominatorSet::runOnFunction(Function &F) {
           //
           while (Doms[*SI].size() == 0) ++SI;
           WorkingSet = Doms[*SI];
-          
+
           for (++SI; SI != SE; ++SI) { // Intersect all of the successor sets
             DomSetType &SuccSet = Doms[*SI];
-            if (SuccSet.size())
-              set_intersect(WorkingSet, SuccSet);
+            if (SuccSet.size()) {
+              DomSetType tmp;
+              std::set_intersection(WorkingSet.begin(), WorkingSet.end(),
+                SuccSet.begin(), SuccSet.end(), std::inserter(tmp, tmp.begin()));
+              WorkingSet.swap(tmp);
+            }
           }
         } else {
           // If this node has no successors, it must be one of the root nodes.
@@ -88,7 +93,7 @@ bool PostDominatorSet::runOnFunction(Function &F) {
           if (Roots.size() > 1)
             WorkingSet.insert(0);
         }
-	
+
         WorkingSet.insert(BB);           // A block always dominates itself
         DomSetType &BBSet = Doms[BB];
         if (BBSet != WorkingSet) {
@@ -144,9 +149,9 @@ void PostDominatorTree::calculate(const PostDominatorSet &DS) {
       // be a predecessor in the depth first order that we are iterating through
       // the function.
       //
-      DominatorSet::DomSetType::const_iterator I = Dominators.begin();
+      DominatorSet::DomSetType::const_iterator I2 = Dominators.begin();
       DominatorSet::DomSetType::const_iterator End = Dominators.end();
-      for (; I != End; ++I) {   // Iterate over dominators...
+      for (; I2 != End; ++I2) {   // Iterate over dominators...
         // All of our dominators should form a chain, where the number
         // of elements in the dominator set indicates what level the
         // node is at in the chain.  We want the node immediately
@@ -154,13 +159,13 @@ void PostDominatorTree::calculate(const PostDominatorSet &DS) {
         // except that BB will not dominate it... therefore it's
         // dominator set size will be one less than BB's...
         //
-        if (DS.getDominators(*I).size() == DomSetSize - 1) {
-          // We know that the immediate dominator should already have a node, 
+        if (DS.getDominators(*I2).size() == DomSetSize - 1) {
+          // We know that the immediate dominator should already have a node,
           // because we are traversing the CFG in depth first order!
           //
-          Node *IDomNode = Nodes[*I];
+          Node *IDomNode = Nodes[*I2];
           assert(IDomNode && "No node for IDOM?");
-	  
+
           // Add a new tree node for this BasicBlock, and link it as a child of
           // IDomNode
           Nodes[BB] = IDomNode->addChild(new Node(BB, IDomNode));
@@ -178,7 +183,7 @@ static RegisterAnalysis<PostDominanceFrontier>
 H("postdomfrontier", "Post-Dominance Frontier Construction", true);
 
 const DominanceFrontier::DomSetType &
-PostDominanceFrontier::calculate(const PostDominatorTree &DT, 
+PostDominanceFrontier::calculate(const PostDominatorTree &DT,
                                  const DominatorTree::Node *Node) {
   // Loop over CFG successors to calculate DFlocal[Node]
   BasicBlock *BB = Node->getBlock();

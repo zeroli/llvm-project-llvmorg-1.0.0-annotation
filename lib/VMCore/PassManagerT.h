@@ -249,7 +249,7 @@ public:
 
       // Run the sub pass!
       if (TheTimeInfo) TheTimeInfo->passStarted(P);
-      bool Changed = runPass(P, M);
+      bool Changed = this->runPass(P, M);
       if (TheTimeInfo) TheTimeInfo->passEnded(P);
       MadeChanges |= Changed;
 

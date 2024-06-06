@@ -853,7 +853,7 @@ template<class DataType>
 struct list_storage<DataType, bool> : public std::vector<DataType> {
 
   template<class T>
-  void addValue(const T &V) { push_back(V); }
+  void addValue(const T &V) { this->push_back(V); }
 };
 
 
@@ -876,7 +876,7 @@ class list : public Option, public list_storage<DataType, Storage> {
     typename ParserClass::parser_data_type Val;
     if (Parser.parse(*this, ArgName, Arg, Val))
       return true;  // Parse Error!
-    addValue(Val);
+    this->addValue(Val);
     return false;
   }
 

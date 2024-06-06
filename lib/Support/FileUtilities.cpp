@@ -1,10 +1,10 @@
 //===- Support/FileUtilities.cpp - File System Utilities ------------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file implements a family of utility functions which are useful for doing
@@ -62,7 +62,7 @@ void MoveFileOverIfUpdated(const std::string &New, const std::string &Old) {
       std::cerr << "Error renaming '" << New << "' to '" << Old << "'!\n";
   } else {
     std::remove(New.c_str());
-  }  
+  }
 }
 
 /// removeFile - Delete the specified file
@@ -84,6 +84,9 @@ std::string getUniqueFilename(const std::string &FilenameBase) {
   strcpy(FNBuffer, FilenameBase.c_str());
   strcpy(FNBuffer+FilenameBase.size(), "-XXXXXX");
 
+  static int i = 0;
+  snprintf(FNBuffer, sizeof(FNBuffer), "./tmp-file-%d", i++);
+#if 0
   // Agree on a temporary file name to use....
   int TempFD;
   if ((TempFD = mkstemp(FNBuffer)) == -1) {
@@ -91,10 +94,10 @@ std::string getUniqueFilename(const std::string &FilenameBase) {
 	      << " directory!\n";
     exit(1);
   }
-
+#endif
   // We don't need to hold the temp file descriptor... we will trust that no one
   // will overwrite/delete the file while we are working on it...
-  close(TempFD);
+  //close(TempFD);
   std::string Result(FNBuffer);
   delete[] FNBuffer;
   return Result;
@@ -207,4 +210,3 @@ MakeFileReadable (const std::string & Filename)
 
   return true;
 }
-

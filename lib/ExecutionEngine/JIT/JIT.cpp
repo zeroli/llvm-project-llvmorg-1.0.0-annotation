@@ -1,10 +1,10 @@
 //===-- JIT.cpp - LLVM Just in Time Compiler ------------------------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file implements the top-level support for creating a Just-In-Time
@@ -23,6 +23,7 @@
 // FIXME: REMOVE THIS
 #include "llvm/PassManager.h"
 
+#define ENABLE_X86_JIT
 #if !defined(ENABLE_X86_JIT) && !defined(ENABLE_SPARC_JIT)
 #define NO_JITS_ENABLED
 #endif
@@ -81,7 +82,7 @@ ExecutionEngine *VM::create(ModuleProvider *MP) {
   // Allocate a target...
   TargetMachine *Target = TargetMachineAllocator(*MP->getModule());
   assert(Target && "Could not allocate target machine!");
-  
+
   // Create the virtual machine object...
   return new VM(MP, Target);
 }

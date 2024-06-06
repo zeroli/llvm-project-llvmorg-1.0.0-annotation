@@ -1,16 +1,16 @@
 //===-- llvm/Bytecode/Primitives.h - Bytecode file format prims -*- C++ -*-===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
-// This header defines some basic functions for reading and writing basic 
+// This header defines some basic functions for reading and writing basic
 // primitive types to a bytecode stream.
 //
-// Using the routines defined in this file does not require linking to any 
+// Using the routines defined in this file does not require linking to any
 // libraries, as all of the services are small self contained units that are to
 // be inlined as necessary.
 //
@@ -66,7 +66,7 @@ static inline bool read(const unsigned char *&Buf, const unsigned char *EndBuf,
 
 // read_vbr - Read an unsigned integer encoded in variable bitrate format.
 //
-static inline bool read_vbr(const unsigned char *&Buf, 
+static inline bool read_vbr(const unsigned char *&Buf,
                             const unsigned char *EndBuf, unsigned &Result) {
   unsigned Shift = Result = 0;
 
@@ -78,7 +78,7 @@ static inline bool read_vbr(const unsigned char *&Buf,
   return Buf > EndBuf;
 }
 
-static inline bool read_vbr(const unsigned char *&Buf, 
+static inline bool read_vbr(const unsigned char *&Buf,
                             const unsigned char *EndBuf, uint64_t &Result) {
   unsigned Shift = 0; Result = 0;
 
@@ -90,7 +90,7 @@ static inline bool read_vbr(const unsigned char *&Buf,
 }
 
 // read_vbr (signed) - Read a signed number stored in sign-magnitude format
-static inline bool read_vbr(const unsigned char *&Buf, 
+static inline bool read_vbr(const unsigned char *&Buf,
                             const unsigned char *EndBuf, int &Result) {
   unsigned R;
   if (read_vbr(Buf, EndBuf, R)) return true;
@@ -98,12 +98,12 @@ static inline bool read_vbr(const unsigned char *&Buf,
     Result = -(int)(R >> 1);
   else
     Result =  (int)(R >> 1);
-  
+
   return false;
 }
 
 
-static inline bool read_vbr(const unsigned char *&Buf, 
+static inline bool read_vbr(const unsigned char *&Buf,
                             const unsigned char *EndBuf, int64_t &Result) {
   uint64_t R;
   if (read_vbr(Buf, EndBuf, R)) return true;
@@ -111,18 +111,18 @@ static inline bool read_vbr(const unsigned char *&Buf,
     Result = -(int64_t)(R >> 1);
   else
     Result =  (int64_t)(R >> 1);
-  
+
   return false;
 }
 
 // align32 - Round up to multiple of 32 bits...
-static inline bool align32(const unsigned char *&Buf, 
+static inline bool align32(const unsigned char *&Buf,
                            const unsigned char *EndBuf) {
-  Buf = (const unsigned char *)((unsigned long)(Buf+3) & (~3UL));
+  Buf = (const unsigned char *)((unsigned long long)(Buf+3) & (~3UL));
   return Buf > EndBuf;
 }
 
-static inline bool read(const unsigned char *&Buf, const unsigned char *EndBuf, 
+static inline bool read(const unsigned char *&Buf, const unsigned char *EndBuf,
                         std::string &Result, bool Aligned = true) {
   unsigned Size;
   if (read_vbr(Buf, EndBuf, Size)) return true;   // Failure reading size?
@@ -138,7 +138,7 @@ static inline bool read(const unsigned char *&Buf, const unsigned char *EndBuf,
 }
 
 static inline bool input_data(const unsigned char *&Buf,
-                              const unsigned char *EndBuf, 
+                              const unsigned char *EndBuf,
                               void *Ptr, void *End, bool Align = false) {
   unsigned char *Start = (unsigned char *)Ptr;
   unsigned Amount = (unsigned char *)End - Start;
@@ -161,20 +161,20 @@ static inline bool input_data(const unsigned char *&Buf,
 //===----------------------------------------------------------------------===//
 
 // output - If a position is specified, it must be in the valid portion of the
-// string... note that this should be inlined always so only the relevant IF 
+// string... note that this should be inlined always so only the relevant IF
 // body should be included...
 //
 static inline void output(unsigned i, std::deque<unsigned char> &Out,
                           int pos = -1) {
 #ifdef ENDIAN_LITTLE
-  if (pos == -1) 
+  if (pos == -1)
     Out.insert(Out.end(), (unsigned char*)&i, (unsigned char*)&i+4);
   else
     // This cannot use block copy because deques are not guaranteed contiguous!
     std::copy((unsigned char*)&i, 4+(unsigned char*)&i, Out.begin()+pos);
 #else
   if (pos == -1) { // Be endian clean, little endian is our friend
-    Out.push_back((unsigned char)i); 
+    Out.push_back((unsigned char)i);
     Out.push_back((unsigned char)(i >> 8));
     Out.push_back((unsigned char)(i >> 16));
     Out.push_back((unsigned char)(i >> 24));
@@ -195,7 +195,7 @@ static inline void output(int i, std::deque<unsigned char> &Out) {
 // possible.  This is useful because many of our "infinite" values are really
 // very small most of the time... but can be large a few times...
 //
-// Data format used:  If you read a byte with the night bit set, use the low 
+// Data format used:  If you read a byte with the night bit set, use the low
 // seven bits as data and then read another byte...
 //
 // Note that using this may cause the output buffer to become unaligned...
@@ -206,7 +206,7 @@ static inline void output_vbr(uint64_t i, std::deque<unsigned char> &out) {
       out.push_back((unsigned char)i);   // We know the high bit is clear...
       return;
     }
-    
+
     // Nope, we are bigger than a character, output the next 7 bits and set the
     // high bit to say that there is more coming...
     out.push_back(0x80 | (i & 0x7F));
@@ -220,7 +220,7 @@ static inline void output_vbr(unsigned i, std::deque<unsigned char> &out) {
       out.push_back((unsigned char)i);   // We know the high bit is clear...
       return;
     }
-    
+
     // Nope, we are bigger than a character, output the next 7 bits and set the
     // high bit to say that there is more coming...
     out.push_back(0x80 | (i & 0x7F));
@@ -229,7 +229,7 @@ static inline void output_vbr(unsigned i, std::deque<unsigned char> &out) {
 }
 
 static inline void output_vbr(int64_t i, std::deque<unsigned char> &out) {
-  if (i < 0) 
+  if (i < 0)
     output_vbr(((uint64_t)(-i) << 1) | 1, out); // Set low order sign bit...
   else
     output_vbr((uint64_t)i << 1, out);          // Low order bit is clear.
@@ -237,13 +237,13 @@ static inline void output_vbr(int64_t i, std::deque<unsigned char> &out) {
 
 
 static inline void output_vbr(int i, std::deque<unsigned char> &out) {
-  if (i < 0) 
+  if (i < 0)
     output_vbr(((unsigned)(-i) << 1) | 1, out); // Set low order sign bit...
   else
     output_vbr((unsigned)i << 1, out);          // Low order bit is clear.
 }
 
-// align32 - emit the minimal number of bytes that will bring us to 32 bit 
+// align32 - emit the minimal number of bytes that will bring us to 32 bit
 // alignment...
 //
 static inline void align32(std::deque<unsigned char> &Out) {
@@ -251,7 +251,7 @@ static inline void align32(std::deque<unsigned char> &Out) {
   while (NumPads--) Out.push_back((unsigned char)0xAB);
 }
 
-static inline void output(const std::string &s, std::deque<unsigned char> &Out, 
+static inline void output(const std::string &s, std::deque<unsigned char> &Out,
                           bool Aligned = true) {
   unsigned Len = s.length();
   output_vbr(Len, Out);             // Strings may have an arbitrary length...

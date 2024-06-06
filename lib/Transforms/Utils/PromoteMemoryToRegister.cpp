@@ -1,10 +1,10 @@
 //===- PromoteMemoryToRegister.cpp - Convert allocas to registers ---------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file promote memory references to be register references.  It promotes
@@ -24,6 +24,7 @@
 #include "llvm/Constant.h"
 #include "llvm/Support/CFG.h"
 #include "Support/StringExtras.h"
+#include <algorithm>
 
 /// isAllocaPromotable - Return true if this alloca is legal for promotion.
 /// This is true if there are only loads and stores to the alloca...
@@ -42,7 +43,7 @@ bool isAllocaPromotable(const AllocaInst *AI, const TargetData &TD) {
       } else {
         return false;   // Not a load or store?
       }
-  
+
   return true;
 }
 
@@ -195,13 +196,13 @@ void PromoteMem2Reg::run() {
       if (!HasOtherPHIs)
         NewPhiNodes.erase(PN->getParent());
 
-      PN->getParent()->getInstList().erase(PN);      
+      PN->getParent()->getInstList().erase(PN);
     }
 
-    // Keep the reverse mapping of the 'Allocas' array. 
+    // Keep the reverse mapping of the 'Allocas' array.
     AllocaLookup[Allocas[AllocaNum]] = AllocaNum;
   }
-  
+
   if (Allocas.empty())
     return; // All of the allocas must have been trivial!
 
@@ -240,7 +241,7 @@ void PromoteMem2Reg::run() {
   // have incoming values for all predecessors.  Loop over all PHI nodes we have
   // created, inserting null constants if they are missing any incoming values.
   //
-  for (std::map<BasicBlock*, std::vector<PHINode *> >::iterator I = 
+  for (std::map<BasicBlock*, std::vector<PHINode *> >::iterator I =
          NewPhiNodes.begin(), E = NewPhiNodes.end(); I != E; ++I) {
 
     std::vector<BasicBlock*> Preds(pred_begin(I->first), pred_end(I->first));
@@ -333,7 +334,7 @@ void PromoteMem2Reg::PromoteLocallyUsedAlloca(AllocaInst *AI) {
 
   // Uses of the uninitialized memory location shall get zero...
   Value *CurVal = Constant::getNullValue(AI->getAllocatedType());
-  
+
   BasicBlock *BB = cast<Instruction>(AI->use_back())->getParent();
 
   for (BasicBlock::iterator I = BB->begin(), E = BB->end(); I != E; ) {
@@ -407,7 +408,7 @@ void PromoteMem2Reg::RenamePass(BasicBlock *BB, BasicBlock *Pred,
 
   // don't revisit nodes
   if (Visited.count(BB)) return;
-  
+
   // mark as visited
   Visited.insert(BB);
 

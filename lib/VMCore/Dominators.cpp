@@ -69,8 +69,12 @@ void DominatorSet::calculateDominatorsFromBlock(BasicBlock *RootBB) {
           // Intersect all of the predecessor sets
           for (++PI; PI != PEnd; ++PI) {
             DomSetType &PredSet = Doms[*PI];
-            if (PredSet.size())
-              set_intersect(WorkingSet, PredSet);
+            if (PredSet.size()) {
+              DomSetType tmp;
+              std::set_intersection(WorkingSet.begin(), WorkingSet.end(),
+                PredSet.begin(), PredSet.end(), std::inserter(tmp, tmp.begin()));
+              WorkingSet.swap(tmp);
+            }
           }
         }
       } else {

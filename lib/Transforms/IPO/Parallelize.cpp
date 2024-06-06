@@ -1,15 +1,15 @@
 //===- Parallelize.cpp - Auto parallelization using DS Graphs -------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file implements a pass that automatically parallelizes a program,
 // using the Cilk multi-threaded runtime system to execute parallel code.
-// 
+//
 // The pass uses the Program Dependence Graph (class PDGIterator) to
 // identify parallelizable function calls, i.e., calls whose instances
 // can be executed in parallel with instances of other function calls.
@@ -22,7 +22,7 @@
 // (2) calls to a sync() function introduced at synchronization points.
 // The CWriter recognizes these functions and inserts the appropriate Cilk
 // keywords when writing out C code.  This C code must be compiled with cilk2c.
-// 
+//
 // Current algorithmic limitations:
 // -- no array dependence analysis
 // -- no parallelization for function calls in different loop iterations
@@ -30,7 +30,7 @@
 //
 // Limitations of using Cilk:
 // -- No parallelism within a function body, e.g., in a loop;
-// -- Simplistic synchronization model requiring all parallel threads 
+// -- Simplistic synchronization model requiring all parallel threads
 //    created within a function to block at a sync().
 // -- Excessive overhead at "spawned" function calls, which has no benefit
 //    once all threads are busy (especially common when the degree of
@@ -52,17 +52,18 @@
 #include "Support/hash_map"
 #include <functional>
 #include <algorithm>
+#include <cstring>
 
-//---------------------------------------------------------------------------- 
+//----------------------------------------------------------------------------
 // Global constants used in marking Cilk functions and function calls.
-//---------------------------------------------------------------------------- 
+//----------------------------------------------------------------------------
 
 static const char * const CilkSuffix = ".llvm2cilk";
 static const char * const DummySyncFuncName = "__sync.llvm2cilk";
 
-//---------------------------------------------------------------------------- 
+//----------------------------------------------------------------------------
 // Routines to identify Cilk functions, calls to Cilk functions, and syncs.
-//---------------------------------------------------------------------------- 
+//----------------------------------------------------------------------------
 
 static bool isCilk(const Function& F) {
   return (F.getName().rfind(CilkSuffix) ==
@@ -78,18 +79,18 @@ static bool isCilk(const CallInst& CI) {
   return CI.getCalledFunction() && isCilk(*CI.getCalledFunction());
 }
 
-static bool isSync(const CallInst& CI) { 
+static bool isSync(const CallInst& CI) {
   return CI.getCalledFunction() &&
          CI.getCalledFunction()->getName() == DummySyncFuncName;
 }
 
 
-//---------------------------------------------------------------------------- 
+//----------------------------------------------------------------------------
 // class Cilkifier
 //
 // Code generation pass that transforms code to identify where Cilk keywords
 // should be inserted.  This relies on `llvm-dis -c' to print out the keywords.
-//---------------------------------------------------------------------------- 
+//----------------------------------------------------------------------------
 
 
 class Cilkifier: public InstVisitor<Cilkifier>
@@ -112,13 +113,13 @@ public:
   /*ctor*/      Cilkifier       (Module& M);
 
   // Transform a single function including its name, its call sites, and syncs
-  // 
+  //
   void          TransformFunc   (Function* F,
                                  const hash_set<Function*>& cilkFunctions,
                                  PgmDependenceGraph&  _depGraph);
 
   // The visitor function that does most of the hard work, via DFSVisitInstr
-  // 
+  //
   void visitCallInst(CallInst& CI);
 };
 
@@ -146,7 +147,7 @@ void Cilkifier::TransformFunc(Function* F,
 
   // Now traverse the CFG in rPostorder and eliminate redundant syncs, i.e.,
   // two consecutive sync's on a straight-line path with no intervening spawn.
-  
+
 }
 
 
@@ -252,7 +253,7 @@ void Cilkifier::visitCallInst(CallInst& CI)
       DFSVisitInstr(CI.getNext(), &CI, depsOfRoot);
     }
 
-  // Now, eliminate all users of the SSA value of the CallInst, i.e., 
+  // Now, eliminate all users of the SSA value of the CallInst, i.e.,
   // if the call instruction returns a value, delete the return value
   // register and replace it by a stack slot.
   if (CI.getType() != Type::VoidTy)
@@ -260,13 +261,13 @@ void Cilkifier::visitCallInst(CallInst& CI)
 }
 
 
-//---------------------------------------------------------------------------- 
+//----------------------------------------------------------------------------
 // class FindParallelCalls
 //
 // Find all CallInst instructions that have at least one other CallInst
 // that is independent.  These are the instructions that can produce
 // useful parallelism.
-//---------------------------------------------------------------------------- 
+//----------------------------------------------------------------------------
 
 class FindParallelCalls : public InstVisitor<FindParallelCalls> {
   typedef hash_set<CallInst*>           DependentsSet;
@@ -303,7 +304,7 @@ FindParallelCalls::FindParallelCalls(Function& F,
   // Now we've found all CallInsts reachable from each CallInst.
   // Find those CallInsts that are parallel with at least one other CallInst
   // by counting total inEdges and outEdges.
-  // 
+  //
   unsigned long totalNumCalls = completed.size();
 
   if (totalNumCalls == 1)
@@ -314,7 +315,7 @@ FindParallelCalls::FindParallelCalls(Function& F,
       // FIXME:
       // THIS CASE IS NOT HANDLED RIGHT NOW, I.E., THERE IS NO
       // PARALLELISM FOR CALLS IN DIFFERENT ITERATIONS OF A LOOP.
-      // 
+      //
       return;
     }
 
@@ -350,7 +351,7 @@ void FindParallelCalls::VisitOutEdges(Instruction* I,
     // FIXME: Ignoring parallelism in a loop.  Here we're actually *ignoring*
     // a self-dependence in order to get the count comparison right above.
     // When we include loop parallelism, self-dependences should be included.
-    // 
+    //
     if (CI != root)
 
       { // CallInst root has a path to CallInst I and any calls reachable from I
@@ -394,7 +395,7 @@ void FindParallelCalls::visitCallInst(CallInst& CI)
 }
 
 
-//---------------------------------------------------------------------------- 
+//----------------------------------------------------------------------------
 // class Parallelize
 //
 // (1) Find candidate parallel functions: any function F s.t.
@@ -406,8 +407,8 @@ void FindParallelCalls::visitCallInst(CallInst& CI)
 // (4) For every function X, insert sync statements so that
 //        every spawn is postdominated by a sync before any statements
 //        with a data dependence to/from the call site for the spawn
-// 
-//---------------------------------------------------------------------------- 
+//
+//----------------------------------------------------------------------------
 
 namespace {
   class Parallelize: public Pass
@@ -449,13 +450,13 @@ bool Parallelize::run(Module& M)
 
   // If there is no main (i.e., for an incomplete program), we can do nothing.
   // If there is a main, mark main as a parallel function.
-  // 
+  //
   Function* mainFunc = FindMain(M);
   if (!mainFunc)
     return false;
 
   // (1) Find candidate parallel functions and mark them as Cilk functions
-  // 
+  //
   for (Module::iterator FI = M.begin(), FE = M.end(); FI != FE; ++FI)
     if (! FI->isExternal())
       {
@@ -463,14 +464,14 @@ bool Parallelize::run(Module& M)
         DSGraph& tdg = getAnalysis<TDDataStructures>().getDSGraph(*F);
 
         // All the hard analysis work gets done here!
-        // 
+        //
         FindParallelCalls finder(*F,
                                 getAnalysis<PgmDependenceGraph>().getGraph(*F));
                         /* getAnalysis<MemoryDepAnalysis>().getGraph(*F)); */
 
         // Now we know which call instructions are useful to parallelize.
         // Remember those callee functions.
-        // 
+        //
         for (std::vector<CallInst*>::iterator
                CII = finder.parallelCalls.begin(),
                CIE = finder.parallelCalls.end(); CII != CIE; ++CII)
@@ -493,7 +494,7 @@ bool Parallelize::run(Module& M)
       }
 
   // Remove all indirectly called functions from the list of Cilk functions.
-  // 
+  //
   for (hash_set<Function*>::iterator PFI = parallelFunctions.begin(),
          PFE = parallelFunctions.end(); PFI != PFE; ++PFI)
     if (indirectlyCalled.count(*PFI) == 0)
@@ -503,7 +504,7 @@ bool Parallelize::run(Module& M)
 #ifdef CAN_USE_BIND1ST_ON_REFERENCE_TYPE_ARGS
   // Use this indecipherable STLese because erase invalidates iterators.
   // Otherwise we have to copy sets as above.
-  hash_set<Function*>::iterator extrasBegin = 
+  hash_set<Function*>::iterator extrasBegin =
     std::remove_if(parallelFunctions.begin(), parallelFunctions.end(),
                    compose1(std::bind2nd(std::greater<int>(), 0),
                             bind_obj(&indirectlyCalled,
@@ -523,7 +524,7 @@ bool Parallelize::run(Module& M)
   //     This should identify both functions and calls to such functions
   //     to the code generator.
   // (4) Also, insert calls to sync at appropriate points.
-  // 
+  //
   Cilkifier cilkifier(M);
   for (hash_set<Function*>::iterator CFI = safeParallelFunctions.begin(),
          CFE = safeParallelFunctions.end(); CFI != CFE; ++CFI)

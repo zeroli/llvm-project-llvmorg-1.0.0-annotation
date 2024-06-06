@@ -1,10 +1,10 @@
 //===-- Writer.cpp - Library for converting LLVM code to C ----------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This library converts LLVM code to C code, compilable by GCC.
@@ -33,7 +33,7 @@
 
 namespace {
   class CWriter : public Pass, public InstVisitor<CWriter> {
-    std::ostream &Out; 
+    std::ostream &Out;
     Mangler *Mang;
     const Module *TheModule;
     std::map<const Type *, std::string> TypeNames;
@@ -96,7 +96,7 @@ namespace {
       // Must be an expression, must be used exactly once.  If it is dead, we
       // emit it inline where it would go.
       if (I.getType() == Type::VoidTy || !I.hasOneUse() ||
-          isa<TerminatorInst>(I) || isa<CallInst>(I) || isa<PHINode>(I) || 
+          isa<TerminatorInst>(I) || isa<CallInst>(I) || isa<PHINode>(I) ||
           isa<LoadInst>(I) || isa<VAArgInst>(I) || isa<VANextInst>(I))
         // Don't inline a load across a store or other bad things!
         return false;
@@ -111,7 +111,7 @@ namespace {
     //
     static const AllocaInst *isDirectAlloca(const Value *V) {
       const AllocaInst *AI = dyn_cast<AllocaInst>(V);
-      if (!AI) return false;
+      if (!AI) return 0;
       if (AI->isArrayAllocation())
         return 0;   // FIXME: we can also inline fixed size array allocas!
       if (AI->getParent() != &AI->getParent()->getParent()->getEntryBlock())
@@ -189,7 +189,7 @@ std::ostream &CWriter::printType(std::ostream &Out, const Type *Ty,
       std::cerr << "Unknown primitive type: " << Ty << "\n";
       abort();
     }
-  
+
   // Check to see if the type is named.
   if (!IgnoreName || isa<OpaqueType>(Ty)) {
     std::map<const Type *, std::string>::iterator I = TypeNames.find(Ty);
@@ -199,7 +199,7 @@ std::ostream &CWriter::printType(std::ostream &Out, const Type *Ty,
   switch (Ty->getPrimitiveID()) {
   case Type::FunctionTyID: {
     const FunctionType *MTy = cast<FunctionType>(Ty);
-    std::stringstream FunctionInnards; 
+    std::stringstream FunctionInnards;
     FunctionInnards << " (" << NameSoFar << ") (";
     for (FunctionType::ParamTypes::const_iterator
            I = MTy->getParamTypes().begin(),
@@ -209,7 +209,7 @@ std::ostream &CWriter::printType(std::ostream &Out, const Type *Ty,
       printType(FunctionInnards, *I, "");
     }
     if (MTy->isVarArg()) {
-      if (!MTy->getParamTypes().empty()) 
+      if (!MTy->getParamTypes().empty())
     	FunctionInnards << ", ...";
     } else if (MTy->getParamTypes().empty()) {
       FunctionInnards << "void";
@@ -231,7 +231,7 @@ std::ostream &CWriter::printType(std::ostream &Out, const Type *Ty,
       Out << ";\n";
     }
     return Out << "}";
-  }  
+  }
 
   case Type::PointerTyID: {
     const PointerType *PTy = cast<PointerType>(Ty);
@@ -240,9 +240,9 @@ std::ostream &CWriter::printType(std::ostream &Out, const Type *Ty,
     // Do not need parens around "* NameSoFar" if NameSoFar consists only
     // of zero or more '*' chars *and* this is not an unnamed pointer type
     // such as the result type in a cast statement.  Otherwise, enclose in ( ).
-    if (ptrTypeNameNeedsParens(NameSoFar) || !namedContext || 
+    if (ptrTypeNameNeedsParens(NameSoFar) || !namedContext ||
         PTy->getElementType()->getPrimitiveID() == Type::ArrayTyID)
-      ptrName = "(" + ptrName + ")";    // 
+      ptrName = "(" + ptrName + ")";    //
 
     return printType(Out, PTy->getElementType(), ptrName);
   }
@@ -273,7 +273,7 @@ void CWriter::printConstantArray(ConstantArray *CPA) {
 
   // As a special case, print the array as a string if it is an array of
   // ubytes or an array of sbytes with positive values.
-  // 
+  //
   const Type *ETy = CPA->getType()->getElementType();
   bool isString = (ETy == Type::SByteTy || ETy == Type::UByteTy);
 
@@ -281,7 +281,7 @@ void CWriter::printConstantArray(ConstantArray *CPA) {
   if (isString && (CPA->getNumOperands() == 0 ||
                    !cast<Constant>(*(CPA->op_end()-1))->isNullValue()))
     isString = false;
-  
+
   if (isString) {
     Out << "\"";
     // Keep track of whether the last number was a hexadecimal escape
@@ -290,7 +290,7 @@ void CWriter::printConstantArray(ConstantArray *CPA) {
     // Do not include the last character, which we know is null
     for (unsigned i = 0, e = CPA->getNumOperands()-1; i != e; ++i) {
       unsigned char C = cast<ConstantInt>(CPA->getOperand(i))->getRawValue();
-      
+
       // Print it out literally if it is a printable character.  The only thing
       // to be careful about is when the last letter output was a hex escape
       // code, in which case we have to be careful not to print out hex digits
@@ -312,7 +312,7 @@ void CWriter::printConstantArray(ConstantArray *CPA) {
         case '\v': Out << "\\v"; break;
         case '\a': Out << "\\a"; break;
         case '\"': Out << "\\\""; break;
-        case '\'': Out << "\\\'"; break;           
+        case '\'': Out << "\\\'"; break;
         default:
           Out << "\\x";
           Out << (char)(( C/16  < 10) ? ( C/16 +'0') : ( C/16 -10+'A'));
@@ -515,12 +515,12 @@ void CWriter::writeOperandInternal(Value *Operand) {
       // Should we inline this instruction to build a tree?
       Out << "(";
       visit(*I);
-      Out << ")";    
+      Out << ")";
       return;
     }
-  
+
   if (Constant *CPV = dyn_cast<Constant>(Operand)) {
-    printConstant(CPV); 
+    printConstant(CPV);
   } else {
     Out << Mang->getValueName(Operand);
   }
@@ -613,15 +613,15 @@ void CWriter::printModule(Module *M) {
   Out << "#include <stdarg.h>\n";
   Out << "#include <setjmp.h>\n";
   generateCompilerSpecificCode(Out);
-  
+
   // Provide a definition for `bool' if not compiling with a C++ compiler.
   Out << "\n"
       << "#ifndef __cplusplus\ntypedef unsigned char bool;\n#endif\n"
-    
+
       << "\n\n/* Support for floating point constants */\n"
       << "typedef unsigned long long ConstantDoubleTy;\n"
       << "typedef unsigned int        ConstantFloatTy;\n"
-    
+
       << "\n\n/* Support for the invoke instruction */\n"
       << "extern struct __llvm_jmpbuf_list_t {\n"
       << "  jmp_buf buf; struct __llvm_jmpbuf_list_t *next;\n"
@@ -677,7 +677,7 @@ void CWriter::printModule(Module *M) {
       if (!I->isExternal()) {
         Out << "extern ";
         printType(Out, I->getType()->getElementType(), Mang->getValueName(I));
-      
+
         Out << ";\n";
       }
   }
@@ -704,7 +704,7 @@ void CWriter::printModule(Module *M) {
 
   // Output all floating point constants that cannot be printed accurately...
   printFloatingPointConstants(*M);
-  
+
   // Output all of the functions...
   emittedInvoke = false;
   if (!M->empty()) {
@@ -750,9 +750,9 @@ void CWriter::printFloatingPointConstants(Module &M) {
         if (!isFPCSafeToPrint(FPC) && // Do not put in FPConstantMap if safe.
             !FPConstantMap.count(FPC)) {
           double Val = FPC->getValue();
-          
+
           FPConstantMap[FPC] = FPCounter;  // Number the FP constants
-          
+
           if (FPC->getType() == Type::DoubleTy) {
             DBLUnion.D = Val;
             Out << "const ConstantDoubleTy FPConstant" << FPCounter++
@@ -766,7 +766,7 @@ void CWriter::printFloatingPointConstants(Module &M) {
           } else
             assert(0 && "Unknown float type!");
         }
-  
+
   Out << "\n";
  }
 
@@ -782,7 +782,7 @@ void CWriter::printSymbolTable(const SymbolTable &ST) {
   // We are only interested in the type plane of the symbol table...
   SymbolTable::type_const_iterator I   = ST.type_begin(Type::TypeTy);
   SymbolTable::type_const_iterator End = ST.type_end(Type::TypeTy);
-  
+
   // Print out forward declarations for structure types before anything else!
   Out << "/* Structure forward decls */\n";
   for (; I != End; ++I)
@@ -833,10 +833,10 @@ void CWriter::printContainedStructs(const Type *Ty,
         if (isa<StructType>(Ty1) || isa<ArrayType>(Ty1))
           printContainedStructs(*I, StructPrinted);
       }
-      
+
       //Print structure type out..
       StructPrinted.insert(STy);
-      std::string Name = TypeNames[STy];  
+      std::string Name = TypeNames[STy];
       printType(Out, STy, Name, true);
       Out << ";\n\n";
     }
@@ -852,21 +852,21 @@ void CWriter::printContainedStructs(const Type *Ty,
 
 void CWriter::printFunctionSignature(const Function *F, bool Prototype) {
   // If the program provides its own malloc prototype we don't need
-  // to include the general one.  
+  // to include the general one.
   if (Mang->getValueName(F) == "malloc")
     needsMalloc = false;
 
   if (F->hasInternalLinkage()) Out << "static ";
   if (F->hasLinkOnceLinkage()) Out << "inline ";
-  
+
   // Loop over the arguments, printing them...
   const FunctionType *FT = cast<FunctionType>(F->getFunctionType());
-  
-  std::stringstream FunctionInnards; 
-    
+
+  std::stringstream FunctionInnards;
+
   // Print out the name...
   FunctionInnards << Mang->getValueName(F) << "(";
-    
+
   if (!F->isExternal()) {
     if (!F->aempty()) {
       std::string ArgName;
@@ -878,14 +878,14 @@ void CWriter::printFunctionSignature(const Function *F, bool Prototype) {
         FunctionInnards << ", ";
         if (I->hasName() || !Prototype)
           ArgName = Mang->getValueName(I);
-        else 
+        else
           ArgName = "";
         printType(FunctionInnards, I->getType(), ArgName);
       }
     }
   } else {
     // Loop over the arguments, printing them...
-    for (FunctionType::ParamTypes::const_iterator I = 
+    for (FunctionType::ParamTypes::const_iterator I =
 	   FT->getParamTypes().begin(),
 	   E = FT->getParamTypes().end(); I != E; ++I) {
       if (I != FT->getParamTypes().begin()) FunctionInnards << ", ";
@@ -923,7 +923,7 @@ void CWriter::printFunction(Function *F) {
       Out << "  ";
       printType(Out, (*I)->getType(), Mang->getValueName(*I));
       Out << ";\n";
-      
+
       if (isa<PHINode>(*I)) {  // Print out PHI node temporaries as well...
         Out << "  ";
         printType(Out, (*I)->getType(),
@@ -951,7 +951,7 @@ void CWriter::printFunction(Function *F) {
             isa<SwitchInst>(Prev->getTerminator()) ||
             isa<InvokeInst>(Prev->getTerminator())) {
           NeedsLabel = true;
-          break;        
+          break;
         }
 
     if (NeedsLabel) Out << Mang->getValueName(BB) << ":\n";
@@ -971,7 +971,7 @@ void CWriter::printFunction(Function *F) {
     // Don't emit prefix or suffix for the terminator...
     visit(*BB->getTerminator());
   }
-  
+
   Out << "}\n\n";
 }
 
@@ -980,7 +980,7 @@ void CWriter::printFunction(Function *F) {
 //
 void CWriter::visitReturnInst(ReturnInst &I) {
   // Don't output a void return if this is the last basic block in the function
-  if (I.getNumOperands() == 0 && 
+  if (I.getNumOperands() == 0 &&
       &*--I.getParent()->getParent()->end() == I.getParent() &&
       !I.getParent()->size() == 1) {
     return;
@@ -1087,9 +1087,9 @@ void CWriter::visitBranchInst(BranchInst &I) {
       Out << "  if (";
       writeOperand(I.getCondition());
       Out << ") {\n";
-      
+
       printBranchToBlock(I.getParent(), I.getSuccessor(0), 2);
-      
+
       if (isGotoCodeNecessary(I.getParent(), I.getSuccessor(1))) {
         Out << "  } else {\n";
         printBranchToBlock(I.getParent(), I.getSuccessor(1), 2);
@@ -1133,7 +1133,7 @@ void CWriter::visitBinaryOperator(Instruction &I) {
     printType(Out, I.getType(), "", false, false);
     Out << ")(";
   }
-      
+
   writeOperand(I.getOperand(0));
 
   switch (I.getOpcode()) {
@@ -1176,9 +1176,9 @@ void CWriter::visitCastInst(CastInst &I) {
   if (isa<PointerType>(I.getType())&&I.getOperand(0)->getType()->isIntegral() ||
       isa<PointerType>(I.getOperand(0)->getType())&&I.getType()->isIntegral()) {
     // Avoid "cast to pointer from integer of different size" warnings
-    Out << "(long)";  
+    Out << "(long)";
   }
-  
+
   writeOperand(I.getOperand(0));
 }
 
@@ -1188,9 +1188,9 @@ void CWriter::visitCallInst(CallInst &I) {
     if (LLVMIntrinsic::ID ID = (LLVMIntrinsic::ID)F->getIntrinsicID()) {
       switch (ID) {
       default:  assert(0 && "Unknown LLVM intrinsic!");
-      case LLVMIntrinsic::va_start: 
+      case LLVMIntrinsic::va_start:
         Out << "0; ";
-        
+
         Out << "va_start(*(va_list*)&" << Mang->getValueName(&I) << ", ";
         // Output the last argument to the enclosing function...
         if (I.getParent()->getParent()->aempty()) {
@@ -1237,7 +1237,7 @@ void CWriter::visitCallSite(CallSite CS) {
   const PointerType  *PTy   = cast<PointerType>(CS.getCalledValue()->getType());
   const FunctionType *FTy   = cast<FunctionType>(PTy->getElementType());
   const Type         *RetTy = FTy->getReturnType();
-  
+
   writeOperand(CS.getCalledValue());
   Out << "(";
 
@@ -1251,7 +1251,7 @@ void CWriter::visitCallSite(CallSite CS) {
     }
   }
   Out << ")";
-}  
+}
 
 void CWriter::visitMallocInst(MallocInst &I) {
   Out << "(";
@@ -1329,7 +1329,7 @@ void CWriter::printIndexingExpression(Value *Ptr, User::op_iterator I,
       Out << (HasImplicitAddress ? "." : "->");
       Out << "field" << cast<ConstantUInt>(*(I+1))->getValue();
       I += 2;
-    } 
+    }
   }
 
   for (; I != E; ++I)
@@ -1364,7 +1364,7 @@ void CWriter::visitVANextInst(VANextInst &I) {
   Out << ";  va_arg(*(va_list*)&" << Mang->getValueName(&I) << ", ";
   printType(Out, I.getArgType(), "", /*ignoreName*/false,
             /*namedContext*/false);
-  Out << ")";  
+  Out << ")";
 }
 
 void CWriter::visitVAArgInst(VAArgInst &I) {
