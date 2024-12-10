@@ -1,10 +1,10 @@
 //===-- VM.cpp - LLVM Just in Time Compiler -------------------------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This tool implements a just-in-time compiler for LLVM, allowing direct
@@ -37,6 +37,7 @@ void VM::setupPassManager() {
   // Turn the machine code intermediate representation into bytes in memory that
   // may be executed.
   //
+  // 这里是添加真正的释放X86机器指令代码的pass
   if (TM.addPassesToEmitMachineCode(PM, *MCE)) {
     std::cerr << "lli: target '" << TM.getName()
               << "' doesn't support machine code emission!\n";

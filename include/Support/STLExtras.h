@@ -1,10 +1,10 @@
 //===- STLExtras.h - Useful functions when working with the STL -*- C++ -*-===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file contains some templates that are useful if you are working with the
@@ -18,6 +18,7 @@
 #define SUPPORT_STLEXTRAS_H
 
 #include <functional>
+#include <algorithm>
 #include "Support/iterator"
 
 //===----------------------------------------------------------------------===//
@@ -40,7 +41,7 @@
 #define bind_obj(OBJ, METHOD) std::bind1st(std::mem_fun(METHOD), OBJ)
 
 
-// bitwise_or - This is a simple functor that applys operator| on its two 
+// bitwise_or - This is a simple functor that applys operator| on its two
 // arguments to get a boolean result.
 //
 template<class Ty>
@@ -52,13 +53,13 @@ struct bitwise_or : public std::binary_function<Ty, Ty, bool> {
 
 
 // deleter - Very very very simple method that is used to invoke operator
-// delete on something.  It is used like this: 
+// delete on something.  It is used like this:
 //
 //   for_each(V.begin(), B.end(), deleter<Interval>);
 //
-template <class T> 
-static inline void deleter(T *Ptr) { 
-  delete Ptr; 
+template <class T>
+static inline void deleter(T *Ptr) {
+  delete Ptr;
 }
 
 
@@ -98,7 +99,7 @@ public:
   inline mapped_iterator(const mapped_iterator &It)
     : current(It.current), Fn(It.Fn) {}
 
-  inline value_type operator*() const {   // All this work to do this 
+  inline value_type operator*() const {   // All this work to do this
     return Fn(*current);         // little change
   }
 
@@ -110,7 +111,7 @@ public:
   _Self& operator+=   (difference_type n) { current += n; return *this; }
   _Self  operator-    (difference_type n) const { return _Self(current - n); }
   _Self& operator-=   (difference_type n) { current -= n; return *this; }
-  reference operator[](difference_type n) const { return *(*this + n); }  
+  reference operator[](difference_type n) const { return *(*this + n); }
 
   inline bool operator!=(const _Self &X) const { return !operator==(X); }
   inline bool operator==(const _Self &X) const { return current == X.current; }
@@ -122,7 +123,7 @@ public:
 };
 
 template <class _Iterator, class Func>
-inline mapped_iterator<_Iterator, Func> 
+inline mapped_iterator<_Iterator, Func>
 operator+(typename mapped_iterator<_Iterator, Func>::difference_type N,
           const mapped_iterator<_Iterator, Func>& X) {
   return mapped_iterator<_Iterator, Func>(X.getCurrent() - N);
@@ -145,7 +146,7 @@ public:
   inline explicit mapped_iterator(const RootIt &I) : super(I) {}
   inline mapped_iterator(const super &It) : super(It) {}
 
-  inline value_type operator*() const {     // All this work to do 
+  inline value_type operator*() const {     // All this work to do
     return Fn(super::operator*());   // this little thing
   }
 };
@@ -192,7 +193,7 @@ ValueType reduce(InputIt First, InputIt Last, Function Func, ValueType Value) {
 // sequence, given an initial value, an operator, a function, and a sequence.
 //
 template <class InputIt, class Function, class ValueType, class TransFunc>
-inline ValueType reduce_apply(InputIt First, InputIt Last, Function Func, 
+inline ValueType reduce_apply(InputIt First, InputIt Last, Function Func,
 			      ValueType Value, TransFunc XForm) {
   for ( ; First != Last; ++First)
     Value = Func(XForm(*First), Value);
@@ -205,7 +206,7 @@ inline ValueType reduce_apply(InputIt First, InputIt Last, Function Func,
 // sequence, given an initial value, an operator, a function, and a sequence.
 //
 template <class InputIt, class Function, class ValueType, class TransFunc>
-inline ValueType reduce_apply2(InputIt First, InputIt Last, Function Func, 
+inline ValueType reduce_apply2(InputIt First, InputIt Last, Function Func,
 			       ValueType Value, TransFunc XForm) {
   return reduce(map_iterator(First, XForm), map_iterator(Last, XForm),
 		Func, Value);

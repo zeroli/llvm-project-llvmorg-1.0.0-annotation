@@ -1,10 +1,10 @@
 //===-- RegAllocLocal.cpp - A BasicBlock generic register allocator -------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This register allocator allocates registers to a basic block at a time,
@@ -25,11 +25,11 @@
 #include "Support/Debug.h"
 #include "Support/Statistic.h"
 #include <iostream>
-
+#include <algorithm>
 namespace {
   Statistic<> NumSpilled ("ra-local", "Number of registers spilled");
   Statistic<> NumReloaded("ra-local", "Number of registers reloaded");
-  cl::opt<bool> DisableKill("no-kill", cl::Hidden, 
+  cl::opt<bool> DisableKill("no-kill", cl::Hidden,
                             cl::desc("Disable register kill in local-ra"));
 
   class RA : public MachineFunctionPass {
@@ -46,7 +46,7 @@ namespace {
     // that is currently available in a physical register.
     //
     std::map<unsigned, unsigned> Virt2PhysRegMap;
-    
+
     // PhysRegsUsed - This map contains entries for each physical register that
     // currently has a value (ie, it is in Virt2PhysRegMap).  The value mapped
     // to is the virtual register corresponding to the physical register (the
@@ -96,7 +96,7 @@ namespace {
 	  PhysRegsUseOrder.erase(PhysRegsUseOrder.begin()+i-1);
 	  // Add it to the end of the list
 	  PhysRegsUseOrder.push_back(RegMatch);
-	  if (RegMatch == Reg) 
+	  if (RegMatch == Reg)
 	    return;    // Found an exact match, exit early
 	}
     }
@@ -181,7 +181,7 @@ namespace {
     /// specified register class.  If not, return 0.
     ///
     unsigned getFreeReg(const TargetRegisterClass *RC);
-    
+
     /// getReg - Find a physical register to hold the specified virtual
     /// register.  If all compatible physical registers are used, this method
     /// spills the last used virtual register to the stack, and uses that
@@ -222,7 +222,7 @@ int RA::getStackSpaceFor(unsigned VirtReg, const TargetRegisterClass *RC) {
 }
 
 
-/// removePhysReg - This method marks the specified physical register as no 
+/// removePhysReg - This method marks the specified physical register as no
 /// longer being in use.
 ///
 void RA::removePhysReg(unsigned PhysReg) {
@@ -370,12 +370,12 @@ void RA::liberatePhysReg(MachineBasicBlock &MBB, MachineBasicBlock::iterator &I,
     if (unsigned NewReg = getFreeReg(RC)) {
       // Emit the code to copy the value...
       RegInfo->copyRegToReg(MBB, I, NewReg, PhysReg, RC);
-      
+
       // Update our internal state to indicate that PhysReg is available and Reg
       // isn't.
       Virt2PhysRegMap.erase(VirtReg);
       removePhysReg(PhysReg);  // Free the physreg
-      
+
       // Move reference over to new register...
       assignVirtToPhysReg(VirtReg, NewReg);
       return;
@@ -407,7 +407,7 @@ unsigned RA::getReg(MachineBasicBlock &MBB, MachineBasicBlock::iterator &I,
     for (unsigned i = 0; PhysReg == 0; ++i) {
       assert(i != PhysRegsUseOrder.size() &&
              "Couldn't find a register of the appropriate class!");
-      
+
       unsigned R = PhysRegsUseOrder[i];
 
       // We can only use this register if it holds a virtual register (ie, it
@@ -511,7 +511,7 @@ void RA::AllocateBasicBlock(MachineBasicBlock &MBB) {
         unsigned PhysSrcReg = reloadVirtReg(MBB, I, VirtSrcReg);
         MI->SetMachineOperandReg(i, PhysSrcReg);  // Assign the input register
       }
-    
+
     if (!DisableKill) {
       // If this instruction is the last user of anything in registers, kill the
       // value, freeing the register being used, so it doesn't need to be
@@ -642,7 +642,7 @@ void RA::AllocateBasicBlock(MachineBasicBlock &MBB) {
               << I->second << "\n";
 
   assert(Virt2PhysRegMap.empty() && "Virtual registers still in phys regs?");
-  
+
   // Clear any physical register which appear live at the end of the basic
   // block, but which do not hold any virtual registers.  e.g., the stack
   // pointer.

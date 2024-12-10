@@ -1,15 +1,15 @@
 //===-- InstrSelectionSupport.cpp -----------------------------------------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // Target-independent instruction selection code.  See SparcInstrSelection.cpp
 // for usage.
-// 
+//
 //===----------------------------------------------------------------------===//
 
 #include "llvm/CodeGen/InstrSelectionSupport.h"
@@ -23,12 +23,12 @@
 #include "llvm/Constants.h"
 #include "llvm/BasicBlock.h"
 #include "llvm/DerivedTypes.h"
-#include "../../Target/Sparc/SparcInstrSelectionSupport.h"  // FIXME!
+//#include "../../Target/Sparc/SparcInstrSelectionSupport.h"  // FIXME!
 
 
 // Generate code to load the constant into a TmpInstruction (virtual reg) and
 // returns the virtual register.
-// 
+//
 static TmpInstruction*
 InsertCodeToLoadConstant(Function *F,
                          Value* opValue,
@@ -39,15 +39,15 @@ InsertCodeToLoadConstant(Function *F,
   // Create a tmp virtual register to hold the constant.
   MachineCodeForInstruction &mcfi = MachineCodeForInstruction::get(vmInstr);
   TmpInstruction* tmpReg = new TmpInstruction(mcfi, opValue);
-  
+
   target.getInstrInfo().CreateCodeToLoadConst(target, F, opValue, tmpReg,
                                               loadConstVec, mcfi);
-  
+
   // Record the mapping from the tmp VM instruction to machine instruction.
   // Do this for all machine instructions that were not mapped to any
-  // other temp values created by 
+  // other temp values created by
   // tmpReg->addMachineInstruction(loadConstVec.back());
-  
+
   return tmpReg;
 }
 
@@ -100,7 +100,7 @@ ChooseRegOrImmed(Value* val,
     return MachineOperand::MO_VirtualRegister;
 
   // Now check if the constant value fits in the IMMED field.
-  // 
+  //
   return ChooseRegOrImmed((int64_t) valueToUse, val->getType()->isSigned(),
                           opCode, target, canUseImmed,
                           getMachineRegNum, getImmedValue);
@@ -108,14 +108,14 @@ ChooseRegOrImmed(Value* val,
 
 //---------------------------------------------------------------------------
 // Function: FixConstantOperandsForInstr
-// 
+//
 // Purpose:
 // Special handling for constant operands of a machine instruction
 // -- if the constant is 0, use the hardwired 0 register, if any;
 // -- if the constant fits in the IMMEDIATE field, use that field;
 // -- else create instructions to put the constant into a register, either
 //    directly or by loading explicitly from the constant pool.
-// 
+//
 // In the first 2 cases, the operand of `minstr' is modified in place.
 // Returns a vector of machine instructions generated for operands that
 // fall under case 3; these must be inserted before `minstr'.
@@ -127,7 +127,7 @@ FixConstantOperandsForInstr(Instruction* vmInstr,
                             TargetMachine& target)
 {
   std::vector<MachineInstr*> MVec;
-  
+
   MachineOpCode opCode = minstr->getOpCode();
   const TargetInstrInfo& instrInfo = target.getInstrInfo();
   int resultPos = instrInfo.getResultPos(opCode);
@@ -138,7 +138,7 @@ FixConstantOperandsForInstr(Instruction* vmInstr,
   for (unsigned op=0; op < minstr->getNumOperands(); op++)
     {
       const MachineOperand& mop = minstr->getOperand(op);
-          
+
       // Skip the result position, preallocated machine registers, or operands
       // that cannot be constants (CC regs or PC-relative displacements)
       if (resultPos == (int)op ||
@@ -176,7 +176,7 @@ FixConstantOperandsForInstr(Instruction* vmInstr,
           continue;
 
         opType = ChooseRegOrImmed(mop.getImmedValue(), isSigned,
-                                  opCode, target, (immedPos == (int)op), 
+                                  opCode, target, (immedPos == (int)op),
                                   machineRegNum, immedValue);
 
         if (opType == MachineOperand::MO_SignExtendedImmed ||
@@ -187,7 +187,7 @@ FixConstantOperandsForInstr(Instruction* vmInstr,
           minstr->setOpcode(newOpcode);
         }
 
-        if (opType == mop.getType()) 
+        if (opType == mop.getType())
           continue;           // no change: this is the most common case
 
         if (opType == MachineOperand::MO_VirtualRegister) {
@@ -217,7 +217,7 @@ FixConstantOperandsForInstr(Instruction* vmInstr,
                                        tmpReg);
         }
     }
-  
+
   // Also, check for implicit operands used by the machine instruction
   // (no need to check those defined since they cannot be constants).
   // These include:
@@ -227,13 +227,13 @@ FixConstantOperandsForInstr(Instruction* vmInstr,
   // The current instructions with implicit refs (viz., Call and Return)
   // have no immediate fields, so the constant always needs to be loaded
   // into a register.
-  // 
+  //
   bool isCall = instrInfo.isCall(opCode);
   unsigned lastCallArgNum = 0;          // unused if not a call
   CallArgsDescriptor* argDesc = NULL;   // unused if not a call
   if (isCall)
     argDesc = CallArgsDescriptor::get(minstr);
-  
+
   for (unsigned i=0, N=minstr->getNumImplicitRefs(); i < N; ++i)
     if (isa<Constant>(minstr->getImplicitRef(i)) ||
         isa<GlobalValue>(minstr->getImplicitRef(i)))
@@ -242,7 +242,7 @@ FixConstantOperandsForInstr(Instruction* vmInstr,
         TmpInstruction* tmpReg =
           InsertCodeToLoadConstant(F, oldVal, vmInstr, MVec, target);
         minstr->setImplicitRef(i, tmpReg);
-        
+
         if (isCall) {
           // find and replace the argument in the CallArgsDescriptor
           unsigned i=lastCallArgNum;
@@ -254,6 +254,6 @@ FixConstantOperandsForInstr(Instruction* vmInstr,
           argDesc->getArgInfo(i).replaceArgVal(tmpReg);
         }
       }
-  
+
   return MVec;
 }

@@ -124,8 +124,6 @@ void JITMemoryManager::endFunctionBody(unsigned char *FunctionEnd) {
   CurFunctionPtr = FunctionEnd;
 }
 
-
-
 namespace {
   /// Emitter - The JIT implementation of the MachineCodeEmitter, which is used
   /// to output functions to memory for execution.

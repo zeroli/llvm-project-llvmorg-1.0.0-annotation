@@ -1,10 +1,10 @@
 //===-- llvm/CodeGen/MachineInstr.h - MachineInstr class --------*- C++ -*-===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file contains the declaration of the MachineInstr class, which is the
@@ -55,8 +55,8 @@ namespace MOTy {
 }
 
 //===----------------------------------------------------------------------===//
-// class MachineOperand 
-// 
+// class MachineOperand
+//
 // Purpose:
 //   Representation of each machine instruction operand.
 //   This class is designed so that you can allocate a vector of operands
@@ -65,28 +65,28 @@ namespace MOTy {
 //   E.g, for this VM instruction:
 //		ptr = alloca type, numElements
 //   we generate 2 machine instructions on the SPARC:
-// 
+//
 //		mul Constant, Numelements -> Reg
 //		add %sp, Reg -> Ptr
-// 
+//
 //   Each instruction has 3 operands, listed above.  Of those:
 //   -	Reg, NumElements, and Ptr are of operand type MO_Register.
 //   -	Constant is of operand type MO_SignExtendedImmed on the SPARC.
-//	
+//
 //   For the register operands, the virtual register type is as follows:
-//	
+//
 //   -  Reg will be of virtual register type MO_MInstrVirtualReg.  The field
 //	MachineInstr* minstr will point to the instruction that computes reg.
-// 
+//
 //   -	%sp will be of virtual register type MO_MachineReg.
 //	The field regNum identifies the machine register.
-// 
+//
 //   -	NumElements will be of virtual register type MO_VirtualReg.
 //	The field Value* value identifies the value.
-// 
+//
 //   -	Ptr will also be of virtual register type MO_VirtualReg.
 //	Again, the field Value* value identifies the value.
-// 
+//
 //===----------------------------------------------------------------------===//
 
 struct MachineOperand {
@@ -103,7 +103,7 @@ struct MachineOperand {
     MO_ExternalSymbol,          // Name of external global symbol
     MO_GlobalAddress,           // Address of a global value
   };
-  
+
 private:
   // Bit fields of the flags variable used for different operand properties
   enum {
@@ -114,7 +114,7 @@ private:
     HIFLAG64    = 0x10,       // operand is %hi64(value_or_immedVal)
     LOFLAG64    = 0x20,       // operand is %lo64(value_or_immedVal)
     PCRELATIVE  = 0x40,       // Operand is relative to PC, not a global address
-  
+
     USEDEFMASK = 0x03,
   };
 
@@ -124,7 +124,7 @@ private:
 				// ConstantVal for a non-address immediate.
 				// Virtual register for an SSA operand,
 				//   including hidden operands required for
-				//   the generated machine code.     
+				//   the generated machine code.
                                 // LLVM global for MO_GlobalAddress.
 
     int64_t immedVal;		// Constant value for an explicit constant
@@ -194,7 +194,7 @@ public:
     if (isExternalSymbol())
       delete SymbolName;
   }
-  
+
   const MachineOperand &operator=(const MachineOperand &MO) {
     if (isExternalSymbol())             // if old operand had a symbol name,
       delete SymbolName;                // release old memory
@@ -209,7 +209,7 @@ public:
 
   // Accessor methods.  Caller is responsible for checking the
   // operand type before invoking the corresponding accessor.
-  // 
+  //
   MachineOperandType getType() const { return opType; }
 
   /// isPCRelative - This returns the value of the PCRELATIVE flag, which
@@ -226,11 +226,11 @@ public:
   // necessary. Thus the instruction selector can just add registers without
   // abandon, and the register allocator won't be confused.
   bool isVirtualRegister() const {
-    return (opType == MO_VirtualRegister || opType == MO_MachineRegister) 
+    return (opType == MO_VirtualRegister || opType == MO_MachineRegister)
       && regNum >= MRegisterInfo::FirstVirtualRegister;
   }
   bool isPhysicalRegister() const {
-    return (opType == MO_VirtualRegister || opType == MO_MachineRegister) 
+    return (opType == MO_VirtualRegister || opType == MO_MachineRegister)
       && (unsigned)regNum < MRegisterInfo::FirstVirtualRegister;
   }
   bool isRegister() const { return isVirtualRegister() || isPhysicalRegister();}
@@ -246,12 +246,12 @@ public:
   bool isExternalSymbol() const { return opType == MO_ExternalSymbol; }
 
   Value* getVRegValue() const {
-    assert(opType == MO_VirtualRegister || opType == MO_CCRegister || 
+    assert(opType == MO_VirtualRegister || opType == MO_CCRegister ||
 	   isPCRelativeDisp());
     return value;
   }
   Value* getVRegValueOrNull() const {
-    return (opType == MO_VirtualRegister || opType == MO_CCRegister || 
+    return (opType == MO_VirtualRegister || opType == MO_CCRegister ||
             isPCRelativeDisp()) ? value : NULL;
   }
   int getMachineRegNum() const {
@@ -290,7 +290,7 @@ public:
   // used to check if a machine register has been allocated to this operand
   bool hasAllocatedReg() const {
     return (regNum >= 0 &&
-            (opType == MO_VirtualRegister || opType == MO_CCRegister || 
+            (opType == MO_VirtualRegister || opType == MO_CCRegister ||
              opType == MO_MachineRegister));
   }
 
@@ -303,7 +303,7 @@ public:
   // ********** TODO: get rid of this duplicate code! ***********
   unsigned getReg() const {
     return getAllocatedRegNum();
-  }    
+  }
 
   friend std::ostream& operator<<(std::ostream& os, const MachineOperand& mop);
 
@@ -315,32 +315,32 @@ private:
   void markLo32()      { flags |= LOFLAG32; }
   void markHi64()      { flags |= HIFLAG64; }
   void markLo64()      { flags |= LOFLAG64; }
-  
+
   // Replaces the Value with its corresponding physical register after
   // register allocation is complete
   void setRegForValue(int reg) {
-    assert(opType == MO_VirtualRegister || opType == MO_CCRegister || 
+    assert(opType == MO_VirtualRegister || opType == MO_CCRegister ||
 	   opType == MO_MachineRegister);
     regNum = reg;
   }
-  
+
   friend class MachineInstr;
 };
 
 
 //===----------------------------------------------------------------------===//
-// class MachineInstr 
-// 
+// class MachineInstr
+//
 // Purpose:
 //   Representation of each machine instruction.
-// 
+//
 //   MachineOpCode must be an enum, defined separately for each target.
 //   E.g., It is defined in SparcInstructionSelection.h for the SPARC.
-// 
+//
 //  There are 2 kinds of operands:
-// 
-//  (1) Explicit operands of the machine instruction in vector operands[] 
-// 
+//
+//  (1) Explicit operands of the machine instruction in vector operands[]
+//
 //  (2) "Implicit operands" are values implicitly used or defined by the
 //      machine instruction, such as arguments to a CALL, return value of
 //      a CALL (if any), and return value of a RETURN.
@@ -372,22 +372,22 @@ public:
   /// block.
   ///
   MachineInstr(MachineBasicBlock *MBB, int Opcode, unsigned numOps);
-  
+
 
   // The opcode.
-  // 
+  //
   const int getOpcode() const { return opCode; }
   const int getOpCode() const { return opCode; }
 
   // Opcode flags.
-  // 
+  //
   unsigned       getOpCodeFlags() const { return opCodeFlags; }
 
   //
   // Access to explicit operands of the instruction
-  // 
+  //
   unsigned getNumOperands() const { return operands.size() - numImplicitRefs; }
-  
+
   const MachineOperand& getOperand(unsigned i) const {
     assert(i < getNumOperands() && "getOperand() out of range!");
     return operands[i];
@@ -402,7 +402,7 @@ public:
   // This returns the i'th entry in the operand vector.
   // That represents the i'th explicit operand or the (i-N)'th implicit operand,
   // depending on whether i < N or i >= N.
-  // 
+  //
   const MachineOperand& getExplOrImplOperand(unsigned i) const {
     assert(i < operands.size() && "getExplOrImplOperand() out of range!");
     return (i < getNumOperands()? getOperand(i)
@@ -411,9 +411,9 @@ public:
 
   //
   // Access to implicit operands of the instruction
-  // 
+  //
   unsigned getNumImplicitRefs() const{ return numImplicitRefs; }
-  
+
   MachineOperand& getImplicitOp(unsigned i) {
     assert(i < numImplicitRefs && "implicit ref# out of range!");
     return operands[i + operands.size() - numImplicitRefs];
@@ -597,7 +597,7 @@ public:
   /// replace - Support to rewrite a machine instruction in place: for now,
   /// simply replace() and then set new operands with Set.*Operand methods
   /// below.
-  /// 
+  ///
   void replace(int Opcode, unsigned numOperands);
 
   /// setOpcode - Replace the opcode of the current instruction with a new one.
@@ -612,7 +612,7 @@ public:
   }
 
   // Access to set the operands when building the machine instruction
-  // 
+  //
   void SetMachineOperandVal     (unsigned i,
                                  MachineOperand::MachineOperandType operandType,
                                  Value* V);
@@ -632,23 +632,23 @@ public:
   void setOperandLo32(unsigned i) { operands[i].markLo32(); }
   void setOperandHi64(unsigned i) { operands[i].markHi64(); }
   void setOperandLo64(unsigned i) { operands[i].markLo64(); }
-  
-  
+
+
   // SetRegForOperand -
   // SetRegForImplicitRef -
   // Mark an explicit or implicit operand with its allocated physical register.
-  // 
+  //
   void SetRegForOperand(unsigned i, int regNum);
   void SetRegForImplicitRef(unsigned i, int regNum);
 
   //
   // Iterator to enumerate machine operands.
-  // 
+  //
   template<class MITy, class VTy>
   class ValOpIterator : public forward_iterator<VTy, ptrdiff_t> {
     unsigned i;
     MITy MI;
-    
+
     void skipToNextVal() {
       while (i < MI->getNumOperands() &&
              !( (MI->getOperand(i).getType() == MachineOperand::MO_VirtualRegister ||
@@ -656,14 +656,14 @@ public:
                 && MI->getOperand(i).getVRegValue() != 0))
         ++i;
     }
-  
+
     inline ValOpIterator(MITy mi, unsigned I) : i(I), MI(mi) {
       skipToNextVal();
     }
-  
+
   public:
     typedef ValOpIterator<MITy, VTy> _Self;
-    
+
     inline VTy operator*() const {
       return MI->getOperand(i).getVRegValue();
     }
@@ -673,17 +673,17 @@ public:
 
     inline VTy operator->() const { return operator*(); }
 
-    inline bool isUseOnly()   const { return MI->getOperand(i).opIsUse(); } 
-    inline bool isDefOnly()   const { return MI->getOperand(i).opIsDefOnly(); } 
+    inline bool isUseOnly()   const { return MI->getOperand(i).opIsUse(); }
+    inline bool isDefOnly()   const { return MI->getOperand(i).opIsDefOnly(); }
     inline bool isDefAndUse() const { return MI->getOperand(i).opIsDefAndUse();}
 
     inline _Self& operator++() { i++; skipToNextVal(); return *this; }
     inline _Self  operator++(int) { _Self tmp = *this; ++*this; return tmp; }
 
-    inline bool operator==(const _Self &y) const { 
+    inline bool operator==(const _Self &y) const {
       return i == y.i;
     }
-    inline bool operator!=(const _Self &y) const { 
+    inline bool operator!=(const _Self &y) const {
       return !operator==(y);
     }
 

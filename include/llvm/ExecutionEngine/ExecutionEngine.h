@@ -1,10 +1,10 @@
 //===- ExecutionEngine.h - Abstract Execution Engine Interface --*- C++ -*-===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file defines the abstract interface that implements execution support
@@ -33,7 +33,7 @@ class ExecutionEngine {
   const TargetData *TD;
 
 protected:
-  ModuleProvider *MP;
+  ModuleProvider *MP;  // OWN it
   // GlobalAddress - A mapping between LLVM global values and their actualized
   // version...
   std::map<const GlobalValue*, void *> GlobalAddress;
@@ -46,7 +46,7 @@ public:
   ExecutionEngine(ModuleProvider *P);
   ExecutionEngine(Module *M);
   virtual ~ExecutionEngine();
-  
+
   Module &getModule() const { return CurMod; }
   const TargetData &getTargetData() const { return *TD; }
 

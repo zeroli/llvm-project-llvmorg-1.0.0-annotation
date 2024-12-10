@@ -1,10 +1,10 @@
 //===-- X86/X86CodeEmitter.cpp - Convert X86 code to machine code ---------===//
-// 
+//
 //                     The LLVM Compiler Infrastructure
 //
 // This file was developed by the LLVM research group and is distributed under
 // the University of Illinois Open Source License. See LICENSE.TXT for details.
-// 
+//
 //===----------------------------------------------------------------------===//
 //
 // This file contains the pass that transforms the X86 machine instructions into
@@ -42,7 +42,7 @@ namespace {
     JITResolver(MachineCodeEmitter &mce) : MCE(mce) {}
     unsigned getLazyResolver(Function *F);
     unsigned addFunctionReference(unsigned Address, Function *F);
-    
+
   private:
     unsigned emitStubForFunction(Function *F);
     static void CompilationCallback();
@@ -59,7 +59,7 @@ namespace {
 /// keep track of where we are.
 ///
 unsigned JITResolver::addFunctionReference(unsigned Address, Function *F) {
-  LazyCodeGenMap[Address] = F;  
+  LazyCodeGenMap[Address] = F;
   return (intptr_t)&JITResolver::CompilationCallback;
 }
 
@@ -74,7 +74,7 @@ unsigned JITResolver::resolveFunctionReference(unsigned RetAddr) {
 unsigned JITResolver::getLazyResolver(Function *F) {
   std::map<Function*, unsigned>::iterator I = LazyResolverMap.lower_bound(F);
   if (I != LazyResolverMap.end() && I->first == F) return I->second;
-  
+
 //std::cerr << "Getting lazy resolver for : " << ((Value*)F)->getName() << "\n";
 
   unsigned Stub = emitStubForFunction(F);
@@ -110,12 +110,12 @@ void JITResolver::CompilationCallback() {
 
   // Sanity check to make sure this really is a call instruction...
   assert(((unsigned char*)(intptr_t)RetAddr)[-1] == 0xE8 &&"Not a call instr!");
-  
+
   unsigned NewVal = TheJITResolver->resolveFunctionReference(RetAddr);
 
   // Rewrite the call target... so that we don't fault every time we execute
   // the call.
-  *(unsigned*)(intptr_t)RetAddr = NewVal-RetAddr-4;    
+  *(unsigned*)(intptr_t)RetAddr = NewVal-RetAddr-4;
 
   if (isStub) {
     // If this is a stub, rewrite the call into an unconditional branch
@@ -149,6 +149,7 @@ unsigned JITResolver::emitStubForFunction(Function *F) {
 
 
 namespace {
+  // 这个emitter是直接从machine instr释放出X86的二进制代码
   class Emitter : public MachineFunctionPass {
     const X86InstrInfo  *II;
     MachineCodeEmitter  &MCE;
@@ -249,7 +250,7 @@ void Emitter::emitMaybePCRelativeValue(unsigned Address, bool isPCRelative) {
 void Emitter::emitGlobalAddressForCall(GlobalValue *GV) {
   // Get the address from the backend...
   unsigned Address = MCE.getGlobalValueAddress(GV);
-  
+
   if (Address == 0) {
     // FIXME: this is JIT specific!
     if (TheJITResolver == 0)
@@ -578,7 +579,7 @@ void Emitter::emitInstruction(MachineInstr &MI) {
   case X86II::MRMS0m: case X86II::MRMS1m:
   case X86II::MRMS2m: case X86II::MRMS3m:
   case X86II::MRMS4m: case X86II::MRMS5m:
-  case X86II::MRMS6m: case X86II::MRMS7m: 
+  case X86II::MRMS6m: case X86II::MRMS7m:
     MCE.emitByte(BaseOpcode);
     emitMemModRMByte(MI, 0, (Desc.TSFlags & X86II::FormMask)-X86II::MRMS0m);
 

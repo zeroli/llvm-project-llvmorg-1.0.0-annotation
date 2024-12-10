@@ -126,6 +126,7 @@ bool X86TargetMachine::addPassesToJITCompile(FunctionPassManager &PM) {
     PM.add(createMachineFunctionPrinterPass());
 
   // Perform register allocation to convert to a concrete x86 representation
+  // 寄存器分配pass
   PM.add(createRegisterAllocator());
 
   if (PrintCode)
